@@ -1,0 +1,28 @@
+#!/bin/sh
+
+if [ "$LMK_HOME" = "" ] ; then
+   export LMK_HOME="/lmk" ;
+   echo 'LMK_HOME not defined. Using:' $LMK_HOME ;
+fi
+
+export LUA_PATH="$LMK_HOME/scripts/?.lua;$LMK_HOME/scripts/src/?.lua;;"
+export LUA_CPATH="$LMK_HOME/bin/`uname`/?.so;$LMK_HOME/bin/win32/?.dll;;"
+
+if [ -d $LMK_HOME/bin/`uname` ] ; then
+   export LMK_BIN_HOME=$LMK_HOME/bin/`uname` ;
+elif [ `uname -o` = "Cygwin" ] ; then
+   export LMK_BIN_HOME=$LMK_HOME/bin/win32 ;
+fi
+
+if [ "$LMK_BIN_HOME" = "" ] ; then
+   echo LMK_BIN_HOME not found ;
+   exit -1;
+fi
+
+if [ "$LMK_LUA" = "" ] ; then
+   export LMK_LUA=$LMK_BIN_HOME/lua ;
+fi
+
+echo $LMK_LUA $LMK_HOME/scripts/plugingen.lua $* ;
+"$LMK_LUA" $LMK_HOME/scripts/plugingen.lua $* ;
+

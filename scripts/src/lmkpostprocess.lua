@@ -1,0 +1,6 @@
+
+module (...)
+
+function main ()
+end
+
