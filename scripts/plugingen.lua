@@ -15,11 +15,13 @@ namespace dmz {
          ~$(NAME) ();
 
          // Plugin Interface
-         virtual void discover_plugin (const Plugin *PluginPtr);
-         virtual void start_plugin ();
-         virtual void stop_plugin ();
-         virtual void shutdown_plugin ();
-         virtual void remove_plugin (const Plugin *PluginPtr);
+         virtual void update_plugin_state (
+            const PluginStateEnum State,
+            const UInt32 Level);
+
+         virtual void discover_plugin (
+            const PluginDiscoverEnum Mode,
+            const Plugin *PluginPtr);
 $(SYNC_INTERFACE)$(MESSAGE_INTERFACE)$(INPUT_INTERFACE)$(OBJECT_INTERFACE)$(EVENT_INTERFACE)
       protected:
          void _init (Config &local);
@@ -57,32 +59,33 @@ dmz::$(NAME)::~$(NAME) () {
 
 // Plugin Interface
 void
-dmz::$(NAME)::discover_plugin (const Plugin *PluginPtr) {
+dmz::$(NAME)::update_plugin_state (
+      const PluginStateEnum State,
+      const UInt32 Level) {
 
+   if (State == PluginStateStart) {
+
+   }
+   else if (State == PluginStateStop) {
+
+   }
+   else if (State == PluginStateShutdown) {
+
+   }
 }
 
 
 void
-dmz::$(NAME)::start_plugin () {
+dmz::$(NAME)::discover_plugin (
+      const PluginDiscoverEnum Mode,
+      const Plugin *PluginPtr) {
 
-}
+   if (Mode == PluginDiscoverAdd) {
 
+   }
+   else if (Mode == PluginDiscoverRemove) {
 
-void
-dmz::$(NAME)::stop_plugin () {
-
-}
-
-
-void
-dmz::$(NAME)::shutdown_plugin () {
-
-}
-
-
-void
-dmz::$(NAME)::remove_plugin (const Plugin *PluginPtr) {
-
+   }
 }
 $(SYNC_IMPL)$(MESSAGE_IMPL)$(INPUT_IMPL)$(OBJECT_IMPL)$(EVENT_IMPL)
 
