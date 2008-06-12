@@ -1,11 +1,11 @@
 --[[
-{
+return {
    {
       name = "lib name",
-      unique = "unique name",
-      factory = "factory name",
-      nodelete = true,
-      level = { 1, 2, 5, 6 },
+      unique = "unique name", -- optional
+      factory = "factory name", -- optional
+      nodelete = true, -- optional
+      level = { 1, 2, 5, 6, etc, }, -- optional
    },
 }
 --]]
@@ -27,6 +27,11 @@ print (fstr)
       else infoStr = infoStr .. "PluginDeleteModeDoNotDelete, "
       end
       infoStr = infoStr .. "context, 0);"
+      if value.level then
+         for _, level in ipairs (value.level) do
+            infoStr = infoStr .. "\n   info->add_level (" .. level .. ");"
+         end
+      end
       local lstr = "   local.set_config_context (0);\n" ..
         "   config.lookup_all_config_merged (" ..
         '"' .. value.unique .. '", ' ..  "local);"
@@ -62,7 +67,6 @@ local function validate_list (list)
       if not value.unique then value.unique = value.name end
       if not value.factory then value.factory = "create_" .. value.name end
       if not value.delete then value.delete = true end
-      if not value.level then value.level = { 1 } end
    end
 end
 
