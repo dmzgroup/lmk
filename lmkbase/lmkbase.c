@@ -391,7 +391,10 @@ static int lmk_is_valid (lua_State *L) {
    WIN32_FILE_ATTRIBUTE_DATA data;
    memset ((void *) &data, '\0', sizeof (WIN32_FILE_ATTRIBUTE_DATA));
 
-   if (GetFileAttributesEx (path, GetFileExInfoStandard, &data)) { lua_pushboolean (L, 1); }
+   if (GetFileAttributesEx (path, GetFileExInfoStandard, &data)) {
+
+      lua_pushboolean (L, 1);
+   }
 #else /* POSIX */
    struct stat s;
 

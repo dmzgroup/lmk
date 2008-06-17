@@ -134,7 +134,8 @@ function main (files)
       end
       exec ("$(lmk.link)")
       if sys == "win32" then
-         local mt = "mt.exe -nologo -manifest " .. binTarget .. ".manifest -outputresource:" .. binTarget .. ";"
+         local mt = "mt.exe -nologo -manifest " .. binTarget ..
+            ".manifest -outputresource:" .. binTarget .. ";"
          if resolve ("$(type)") == "exe" then mt = mt .. "1" else mt = mt .. "2" end
          exec (mt)
       end

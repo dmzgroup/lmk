@@ -63,7 +63,10 @@ dmz::$(NAME)::update_plugin_state (
       const PluginStateEnum State,
       const UInt32 Level) {
 
-   if (State == PluginStateStart) {
+   if (State == PluginStateInit) {
+
+   }
+   else if (State == PluginStateStart) {
 
    }
    else if (State == PluginStateStop) {
@@ -118,18 +121,18 @@ $(LIBS)   "dmzKernel",
 }$(PREQS)
 ]]
 
-local synch = [[
+local tsh = [[
 
-         // Sync Interface
-         virtual void update_sync (const Float64 TimeDelta);
+         // TimeSlice Interface
+         virtual void update_time_slice (const Float64 TimeDelta);
 ]]
 
-local synccpp = [[
+local tscpp = [[
 
 
-// Sync Interface
+// TimeSlice Interface
 void
-dmz::$(NAME)::update_sync (const Float64 TimeDelta) {
+dmz::$(NAME)::update_time_slice (const Float64 TimeDelta) {
 
 
 }
@@ -909,12 +912,12 @@ print (lmkName .. " " .. headerName .. " " .. cppName .. " "  .. defTag)
    }
    if list then
       for ix = 1, #list do
-         if list[ix].opt== "-s" then
-            vars.SYNC_INCLUDES = "\n#include <dmzRuntimeSync.h>"
-            vars.SYNC_PUBLIC = ",\n         public Sync"
-            vars.SYNC_CONSTRUCTOR = ',\n      Sync (Info)'
-            vars.SYNC_INTERFACE = synch:gsub ("%$%(([_%w]+)%)", vars)
-            vars.SYNC_IMPL = synccpp:gsub ("%$%(([_%w]+)%)", vars)
+         if list[ix].opt== "-t" then
+            vars.SYNC_INCLUDES = "\n#include <dmzRuntimeTimeSlice.h>"
+            vars.SYNC_PUBLIC = ",\n         public TimeSlice"
+            vars.SYNC_CONSTRUCTOR = ',\n      TimeSlice (Info)'
+            vars.SYNC_INTERFACE = tsh:gsub ("%$%(([_%w]+)%)", vars)
+            vars.SYNC_IMPL = tscpp:gsub ("%$%(([_%w]+)%)", vars)
          elseif list[ix].opt== "-o" then
             vars.LIBS = vars.LIBS .. '   "dmzObjectUtil",\n'
             vars.OBJECT_PREQS = '"dmzObjectFramework",'
