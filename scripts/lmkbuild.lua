@@ -22,7 +22,7 @@ get_var = lmk.get_var
 resolve = lmk.resolve
 set_local = lmk.set_local
 set_global = lmk.set_global
-system = lmkbase.system
+system = lmk.system
 is_dir = lmkbase.is_dir
 
 local buildPart1 = nil

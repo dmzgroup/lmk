@@ -30,6 +30,13 @@ print ("doing opt: " .. opt)
                if not result then break end
             end
          end
+      elseif opt == "-s" then
+print ("doing opt: " .. opt)
+         if values then
+            lmk.set_system (values[1])
+print ("Over riding system: " .. values[1])
+         else
+         end
       elseif opt == "-b" then
 print ("doing opt: " .. opt)
          doBuild = false

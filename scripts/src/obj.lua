@@ -6,6 +6,7 @@ local file_newer = lmkbuild.file_newer
 local function gset (name, value)
    lmkbuild.set_global (name, value, true)
 end
+local lset = lmk.set_local
 local get_var = lmkbuild.get_var
 local ipairs = ipairs
 local is_valid = lmkbuild.is_valid
@@ -76,6 +77,18 @@ else -- unix
       gset ("lmk.shared.ext", ".dylib")
       gset ("lmk.plugin.linker", linker)
       gset ("lmk.plugin.linkerFlags", "-bundle")
+   elseif sys == "iphone" then
+print ("Doing iphone link")
+      local linker = "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/" ..
+         "libtool -static -arch_only armv6 -syslibroot " ..
+         "/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk"
+      local outFlag = "-o "
+      gset ("lmk.exe.linker", linker)
+      gset ("lmk.shared.linker", linker)
+      gset ("lmk.shared.ext", ".a")
+      gset ("lmk.plugin.linker", linker)
+      gset ("lmk.plugin.prefix", "lib")
+      gset ("lmk.plugin.ext", ".a")
    elseif sys == "linux" then
       local linker = "g++"
       local outFlag = "-o "
@@ -124,13 +137,16 @@ function main (files)
          end
          set ("objList", objList)
       end
-      local libs = get_var ("libs")
-      if libs then
-         local libList = {}
-         for index, item in ipairs (libs) do
-            libList[index] = "$(lmk.libPrefix)" .. item .. "$(lmk.libSuffix)"
+      if sys == "iphone" then lset ("localLibs", "")
+      else
+         local libs = get_var ("libs")
+         if libs then
+            local libList = {}
+            for index, item in ipairs (libs) do
+               libList[index] = "$(lmk.libPrefix)" .. item .. "$(lmk.libSuffix)"
+            end
+            append ("localLibs", libList)
          end
-         append ("localLibs", libList)
       end
       exec ("$(lmk.link)")
       if sys == "win32" then

@@ -11,16 +11,24 @@ local print = print
 local resolve = lmkbuild.resolve
 local rm = lmkbuild.rm
 local split = lmkbuild.split
+local sys = lmkbuild.system ()
 
 module (...)
 
 function main (files)
-   mkdir ("$(lmk.includeDir)$(name)")
-   append ("localIncludes", "$(lmk.includePathFlag)$(lmk.includeDir)$(name)/")
+   if sys == "iphone" then
+      mkdir ("$(lmk.includeDir)dmz/")
+      append ("localIncludes", "$(lmk.includePathFlag)$(lmk.includeDir)dmz/")
+   else
+      mkdir ("$(lmk.includeDir)$(name)")
+      append ("localIncludes", "$(lmk.includePathFlag)$(lmk.includeDir)$(name)/")
+   end
    for index, item in ipairs (files) do
       item = resolve (item)
       p, f, e = split (item)
-      file = "$(lmk.includeDir)$(name)/" .. f .. "." .. e
+      if sys == "iphone" then file = "$(lmk.includeDir)dmz/" .. f .. "." .. e
+      else file = "$(lmk.includeDir)$(name)/" .. f .. "." .. e
+      end
       if file_newer (item, file) then
          print ("Exporting: " .. item)
          assert (
@@ -36,8 +44,10 @@ end
 
 function clean (files)
    for index, item in ipairs (files) do
-      local p, f, e = split (item)
-      local file = resolve ("$(lmk.includeDir)$(name)/" .. f .. "." .. e)
+      local p, file, e = split (item)
+      if sys == "iphone" then file = resolve ("$(lmk.includeDir)dmz/" .. f .. "." .. e)
+      else file = resolve ("$(lmk.includeDir)$(name)/" .. f .. "." .. e)
+      end
       if is_valid (file) then rm (file) end
    end
 end

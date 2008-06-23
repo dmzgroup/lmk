@@ -645,3 +645,15 @@ end
 function add_files_local (files, src)
    add_files_to_info (gLocalEnv, files, src)
 end
+
+local gSystem = lmkbase.system ()
+function set_system (system)
+   gPersistEnv[lmkbase.system ()] = nil
+   gSystem = system
+   gPersistEnv["platform"] = gSystem
+   gPersistEnv[gSystem] = true
+end
+
+function system ()
+   return gSystem
+end

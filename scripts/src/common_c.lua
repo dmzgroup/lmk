@@ -91,6 +91,22 @@ else -- unix
       gset ("lmk.cc", "gcc")
       gset ("lmk.ccFlags.opt", "-O")
       gset ("lmk.ccFlags.debug", "-g -fPIC")
+   elseif sys == "iphone" then
+print ("Building for iphone")
+      local iphoneFlags = " -arch armv6 -pipe -Wno-trigraphs " ..
+         "-fpascal-strings -fasm-blocks -Wreturn-type -Wunused-variable " ..
+         "-fmessage-length=0 -fvisibility=hidden -miphoneos-version-min=2.0 " ..
+         "-gdwarf-2 -mthumb " ..
+         "-isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/" ..
+         "iPhoneOS2.0.sdk -DDMZ_IPHONE_BUILD"
+      gset ("lmk.cpp", "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/" ..
+         "arm-apple-darwin9-g++-4.0.1" .. iphoneFlags)
+      gset ("lmk.cppFlags.opt", "-O0")
+      gset ("lmk.cppFlags.debug", "-g")
+      gset ("lmk.cc", "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/" ..
+         "arm-apple-darwin9-gcc-4.0.1" .. iphoneFlags)
+      gset ("lmk.ccFlags.opt", "-O0")
+      gset ("lmk.ccFlags.debug", "-g")
    elseif sys == "linux" then
       gset ("lmk.cpp", "g++")
       gset ("lmk.cppFlags.opt", "-O")
@@ -199,16 +215,24 @@ local function str_to_table (str, delimiter)
 end
 
 function create_file_lists (files, execVar)
-   local libs = get_var ("libs")
-   if libs then
-      for index, item in pairs (libs) do
-         append ("localIncludes", "$(lmk.includePathFlag)$(lmk.includeDir)" .. item.. "/")
+   if sys == "iphone" then
+      append ("localIncludes", "$(lmk.includePathFlag)$(lmk.includeDir)dmz/")
+   else
+      local libs = get_var ("libs")
+      if libs then
+         for index, item in pairs (libs) do
+            append (
+               "localIncludes",
+               "$(lmk.includePathFlag)$(lmk.includeDir)" .. item.. "/")
+         end
       end
-   end
-   local preqs = get_var ("preqs")
-   if preqs then
-      for index, item in pairs (preqs) do
-         append ("localIncludes", "$(lmk.includePathFlag)$(lmk.includeDir)" .. item.. "/")
+      local preqs = get_var ("preqs")
+      if preqs then
+         for index, item in pairs (preqs) do
+            append (
+               "localIncludes",
+               "$(lmk.includePathFlag)$(lmk.includeDir)" .. item.. "/")
+         end
       end
    end
    local execList, objList = {}, {}
