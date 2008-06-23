@@ -419,6 +419,7 @@ function init (path)
       gEnv = nil
       if lmkbase.is_valid (global) then
          result, msg = pcall (dofile, global)
+         if not gEnv then set_global_env ({}) end
       else set_global_env ({})
       end
       if not gEnv.lmk then gEnv.lmk = {} end
