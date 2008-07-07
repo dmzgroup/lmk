@@ -73,12 +73,14 @@ else -- unix
       local outFlag = "-o "
       gset ("lmk.exe.linker", linker)
       gset ("lmk.shared.linker", linker)
-      gset ("lmk.shared.linkerFlags", "-dynamiclib -install_name @executable_path/../Frameworks/$(localBinName)")
+      gset (
+         "lmk.shared.linkerFlags",
+         "-dynamiclib " ..
+            "-install_name @executable_path/../Frameworks/$(localBinName)")
       gset ("lmk.shared.ext", ".dylib")
       gset ("lmk.plugin.linker", linker)
       gset ("lmk.plugin.linkerFlags", "-bundle")
    elseif sys == "iphone" then
-print ("Doing iphone link")
       local linker = "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/" ..
          "libtool -static -arch_only armv6 -syslibroot " ..
          "/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk"
