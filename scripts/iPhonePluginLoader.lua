@@ -23,8 +23,8 @@ print ()
 print (fstr)
    for _, value in ipairs (list) do
       local infoStr = '   info = new dmz::PluginInfo ("' .. value.unique .. '", '
-      if value.delete then infoStr = infoStr .. "PluginDeleteModeDelete, "
-      else infoStr = infoStr .. "PluginDeleteModeDoNotDelete, "
+      if value.delete then infoStr = infoStr .. "dmz::PluginDeleteModeDelete, "
+      else infoStr = infoStr .. "dmz::PluginDeleteModeDoNotDelete, "
       end
       infoStr = infoStr .. "context, 0);"
       if value.level then

@@ -92,7 +92,6 @@ else -- unix
       gset ("lmk.ccFlags.opt", "-O")
       gset ("lmk.ccFlags.debug", "-g -fPIC")
    elseif sys == "iphone" then
-print ("Building for iphone")
       local iphoneFlags = " -arch armv6 -pipe -Wno-trigraphs " ..
          "-fpascal-strings -fasm-blocks -Wreturn-type -Wunused-variable " ..
          "-fmessage-length=0 -fvisibility=hidden -miphoneos-version-min=2.0 " ..
