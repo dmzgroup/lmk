@@ -77,4 +77,5 @@ if type (arg[1]) == "string" then
       create_extern (nil, list)
       create_plugin (nil, list)
    end
+else error ("Missing template file")
 end
