@@ -647,7 +647,8 @@ local evnh = [[
 
          virtual void end_event (
             const Handle EventHandle,
-            const EventType &Type);
+            const EventType &Type,
+            const EventLocalityEnum Locality);
 ]]
 
 local evncpp = [[
@@ -666,7 +667,8 @@ dmz::$(NAME)::start_event (
 void
 dmz::$(NAME)::end_event (
       const Handle EventHandle,
-      const EventType &Type) {
+      const EventType &Type,
+      const EventLocalityEnum Locality) {
 
 }
 ]]
