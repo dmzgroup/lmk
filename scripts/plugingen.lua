@@ -142,7 +142,7 @@ local msgh = [[
 
          // Message Observer Interface
          virtual void receive_message (
-            const MessageType &Msg,
+            const Message &Type,
             const UInt32 MessageSendHandle,
             const Handle TargetObserverHandle,
             const Data *InData,
@@ -155,7 +155,7 @@ local msgcpp = [[
 // Message Observer Interface
 void
 dmz::$(NAME)::receive_message (
-      const MessageType &Msg,
+      const Message &Type,
       const UInt32 MessageSendHandle,
       const Handle TargetObserverHandle,
       const Data *InData,
