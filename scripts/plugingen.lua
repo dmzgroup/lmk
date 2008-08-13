@@ -640,12 +640,12 @@ dmz::$(NAME)::update_object_data (
 local evnh = [[
 
          // Event Observer Interface
-         virtual void start_event (
+         virtual void create_event (
             const Handle EventHandle,
             const EventType &Type,
             const EventLocalityEnum Locality);
 
-         virtual void end_event (
+         virtual void close_event (
             const Handle EventHandle,
             const EventType &Type,
             const EventLocalityEnum Locality);
@@ -656,7 +656,7 @@ local evncpp = [[
 
 // Event Observer Interface
 void
-dmz::$(NAME)::start_event (
+dmz::$(NAME)::create_event (
       const Handle EventHandle,
       const EventType &Type,
       const EventLocalityEnum Locality) {
@@ -665,7 +665,7 @@ dmz::$(NAME)::start_event (
 
 
 void
-dmz::$(NAME)::end_event (
+dmz::$(NAME)::close_event (
       const Handle EventHandle,
       const EventType &Type,
       const EventLocalityEnum Locality) {
