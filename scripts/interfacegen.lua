@@ -9,7 +9,9 @@ local header = [[
 
 namespace dmz {
 
+   //! \cond
    const char $(NAME)InterfaceName[] = "$(NAME)Interface";
+   //! \endcond
 
    class $(NAME) {
 
