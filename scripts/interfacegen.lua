@@ -9,10 +9,6 @@ local header = [[
 
 namespace dmz {
 
-   //! \cond
-   const char $(NAME)InterfaceName[] = "$(NAME)Interface";
-   //! \endcond
-
    class $(NAME) {
 
       public:
@@ -36,6 +32,10 @@ namespace dmz {
 
          const PluginInfo &__Info;
    };
+
+   //! \cond
+   const char $(NAME)InterfaceName[] = "$(NAME)Interface";
+   //! \endcond
 };
 
 
