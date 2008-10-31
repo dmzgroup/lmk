@@ -37,6 +37,7 @@ local list = {
 { "QtTest.framework/Versions/4/QtTest", "@executable_path/../Frameworks/Qt/QtTest"},
 { "QtWebKit.framework/Versions/4/QtWebKit", "@executable_path/../Frameworks/Qt/QtWebKit"},
 { "QtXml.framework/Versions/4/QtXml", "@executable_path/../Frameworks/Qt/QtXml"},
+{ "phonon.framework/Versions/4/phonon", "@executable_path/../Frameworks/Qt/phonon"},
 }
 
 local function copy_file (src, target)
