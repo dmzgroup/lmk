@@ -40,6 +40,7 @@ local function local_copy (src, target)
 end
 
 function set_app (file, target)
+   data = {}
    data.app = file
    data.appTarget = target
 end
