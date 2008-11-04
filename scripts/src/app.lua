@@ -79,7 +79,7 @@ local function main_mac (files)
    local appTarget = contentsTarget .. "/MacOS"
    local resourcesTarget = contentsTarget .. "/Resources"
    local configTarget = resourcesTarget .. "/config"
-   local dataTarget = resourcesTarget .. "/data"
+   local dataTarget = resourcesTarget .. "/assets"
    local scriptsTarget = resourcesTarget .. "/scripts"
    mkdir (frameworksTarget)
    mkdir (appTarget)
@@ -167,7 +167,7 @@ local function main_win32 (files)
    local appTarget = resolve ("$(lmk.binDir)" .. files[1])
    local binTarget = appTarget .. "/bin"
    local configTarget = appTarget .. "/config"
-   local dataTarget = appTarget .. "/data"
+   local dataTarget = appTarget .. "/assets"
    local scriptsTarget = appTarget .. "/scripts"
    mkdir (binTarget)
    mkdir (configTarget)
