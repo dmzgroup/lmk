@@ -11,6 +11,7 @@ local is_dir = lmkbuild.is_dir
 local is_valid = lmkbuild.is_valid
 local mkdir = lmkbuild.mkdir
 local cp = lmkbuild.cp
+local copy_file = lmkbuild.copy_file
 local print = print
 local resolve = lmkbuild.resolve
 local rm = lmkbuild.rm
@@ -38,8 +39,9 @@ local function local_copy (src, target)
    return target, isNewer
 end
 
-function set_app (file)
+function set_app (file, target)
    data.app = file
+   data.appTarget = target
 end
 
 function set_plist (file)
@@ -84,6 +86,8 @@ local function main_mac (files)
    mkdir (configTarget)
    mkdir (dataTarget)
    mkdir (scriptsTarget)
+
+   if data.appTarget then appTarget = appTarget .. "/" .. data.appTarget end
 
    local preqs = get_var ("preqs")
    if preqs then
