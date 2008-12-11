@@ -178,8 +178,12 @@ local function main_win32 (files)
    local preqs = get_var ("preqs")
    if preqs then
       for index, item in ipairs (preqs) do
-         local src = "$(" .. item .. ".localBinTarget)"
-         local_copy (src, binTarget)
+            local src = "$(" .. item .. ".localBinTarget)"
+         if (item == data.app) and data.appTarget then
+            local_copy (src, binTarget .. "/" .. data.appTarget .. ".exe")
+         else
+            local_copy (src, binTarget)
+         end
       end
    end
 
