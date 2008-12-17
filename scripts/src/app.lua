@@ -61,11 +61,14 @@ function add_config (files)
    end
 end
 
-function add_data (files)
+function add_assets (files)
    if data.data then append_table (data.data, files)
    else data.data = files
    end
 end
+
+-- For backwards compatibility
+add_data = add_assets
 
 function add_scripts (files)
    if data.scripts then append_table (data.scripts, files)
