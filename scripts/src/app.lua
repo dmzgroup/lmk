@@ -76,6 +76,37 @@ function add_scripts (files)
    end
 end
 
+--[[
+local function process_mac_preqs (preqs, processed, installPaths)
+   if preqs then
+      for index, item in ipairs (preqs) do
+         if not processed[item] then
+            processed[item] = true
+            local src = "$(" .. item .. ".localBinTarget)"
+            local libs = get_var ("$(" .. item .. ".libs)")
+            local target = nil
+            local isNewer = false
+            if item == data.app then
+               target, isNewer = local_copy (src, appTarget)
+               if target and isNewer then exec ("chmod u+x " .. target) end
+            else target, isNewer = local_copy (src, frameworksTarget)
+            end
+            if target and isNewer and installPaths then
+               for index, paths in ipairs (installPaths) do
+                  local arg = "install_name_tool -change " .. paths[1] .. " "
+                     .. paths[2] .. " " .. target
+                  exec (arg)
+               end
+            end
+            if libs then
+               process_mac_preqs (libs, processed, installPaths)
+            end
+         end
+      end
+   end
+end
+--]]
+
 local function main_mac (files)
    local targetName = resolve ("$(lmk.binDir)" .. files[1])
    local contentsTarget = targetName .. "/Contents"
@@ -94,26 +125,39 @@ local function main_mac (files)
    if data.appTarget then appTarget = appTarget .. "/" .. data.appTarget end
 
    local preqs = get_var ("preqs")
-   if preqs then
-      local installPaths = get_var ("installPaths")
-      for index, item in ipairs (preqs) do
-         local src = "$(" .. item .. ".localBinTarget)"
-         local target = nil
-         local isNewer = false
-         if item == data.app then
-            target, isNewer = local_copy (src, appTarget)
-            if target and isNewer then exec ("chmod u+x " .. target) end
-         else target, isNewer = local_copy (src, frameworksTarget)
-         end
-         if target and isNewer and installPaths then
-            for index, paths in ipairs (installPaths) do
-               local arg = "install_name_tool -change " .. paths[1] .. " "
-                  .. paths[2] .. " " .. target
-               exec (arg)
+   local processed = {}
+   local installPaths = get_var ("installPaths")
+
+   local function process_mac_preqs (preqs)
+      if preqs then
+         for index, item in ipairs (preqs) do
+            if not processed[item] then
+               processed[item] = true
+               local src = "$(" .. item .. ".localBinTarget)"
+               local libs = get_var (item .. ".libs")
+               local target = nil
+               local isNewer = false
+               if item == data.app then
+                  target, isNewer = local_copy (src, appTarget)
+                  if target and isNewer then exec ("chmod u+x " .. target) end
+               else target, isNewer = local_copy (src, frameworksTarget)
+               end
+               if target and isNewer and installPaths then
+                  for index, paths in ipairs (installPaths) do
+                     local arg = "install_name_tool -change " .. paths[1] .. " "
+                        .. paths[2] .. " " .. target
+                     exec (arg)
+                  end
+               end
+               if libs then
+                  process_mac_preqs (libs)
+               end
             end
          end
       end
    end
+
+   process_mac_preqs (preqs, processed, installPaths)
 
    if data.config then
       for index, item in ipairs (data.config) do
@@ -179,16 +223,27 @@ local function main_win32 (files)
    mkdir (scriptsTarget)
 
    local preqs = get_var ("preqs")
-   if preqs then
-      for index, item in ipairs (preqs) do
-            local src = "$(" .. item .. ".localBinTarget)"
-         if (item == data.app) and data.appTarget then
-            local_copy (src, binTarget .. "/" .. data.appTarget .. ".exe")
-         else
-            local_copy (src, binTarget)
+   local processed = {}
+
+   local function process_win32_preqs (preqs)
+      if preqs then
+         for index, item in ipairs (preqs) do
+            if not processed[item] then
+               processed[item] = true
+               local libs = get_var (item .. ".libs")
+               local src = "$(" .. item .. ".localBinTarget)"
+               if (item == data.app) and data.appTarget then
+                  local_copy (src, binTarget .. "/" .. data.appTarget .. ".exe")
+               else
+                  local_copy (src, binTarget)
+               end
+               if libs then process_win32_preqs (libs) end
+            end
          end
       end
    end
+
+   process_win32_preqs (preqs)
 
    if data.config then
       for index, item in ipairs (data.config) do
