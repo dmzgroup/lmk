@@ -1,7 +1,9 @@
 require "lmkbuild"
 
 local append_table = lmkbuild.append_table
+local get_dirs = lmkbuild.directories
 local exec = lmkbuild.exec
+local get_files = lmkbuild.files
 local file_newer = lmkbuild.file_newer
 local get_build_number = lmkbuild.get_build_number
 local get_var = lmkbuild.get_var
@@ -49,21 +51,50 @@ function set_plist (file)
    data.plist = file
 end
 
+local function expand_file_list (files)
+   local result = {}
+   for _, value in ipairs (files) do
+      if is_dir (value) then
+         local newFiles = get_files (value)
+         if newFiles then
+            for _, file in ipairs (newFiles) do
+               result[#result + 1] = value .. "/" .. file
+            end
+         end
+         local newDirs = get_dirs (value)
+         if newDirs then
+            local list = {}
+            for _, dir in ipairs (newDirs) do
+               list[#list + 1] = value .. "/" .. dir
+            end
+            list = expand_file_list (list)
+            append_table (result, list)
+         end
+      else
+         result[#result + 1] = value
+      end
+   end
+   return result
+end
+
 function add_icons (files)
-   if data.icons then append_table (data.icons, files)
-   else data.icons = files
+   local list = expand_file_list (files)
+   if data.icons then append_table (data.icons, list)
+   else data.icons = list
    end
 end
 
 function add_config (files)
-   if data.config then append_table (data.config, files)
-   else data.config = files
+   local list = expand_file_list (files)
+   if data.config then append_table (data.config, list)
+   else data.config = list
    end
 end
 
 function add_assets (files)
-   if data.data then append_table (data.data, files)
-   else data.data = files
+   local list = expand_file_list (files)
+   if data.data then append_table (data.data, list)
+   else data.data = list
    end
 end
 
@@ -71,41 +102,11 @@ end
 add_data = add_assets
 
 function add_scripts (files)
-   if data.scripts then append_table (data.scripts, files)
-   else data.scripts = files
+   local list = expand_file_list (files)
+   if data.scripts then append_table (data.scripts, list)
+   else data.scripts = list
    end
 end
-
---[[
-local function process_mac_preqs (preqs, processed, installPaths)
-   if preqs then
-      for index, item in ipairs (preqs) do
-         if not processed[item] then
-            processed[item] = true
-            local src = "$(" .. item .. ".localBinTarget)"
-            local libs = get_var ("$(" .. item .. ".libs)")
-            local target = nil
-            local isNewer = false
-            if item == data.app then
-               target, isNewer = local_copy (src, appTarget)
-               if target and isNewer then exec ("chmod u+x " .. target) end
-            else target, isNewer = local_copy (src, frameworksTarget)
-            end
-            if target and isNewer and installPaths then
-               for index, paths in ipairs (installPaths) do
-                  local arg = "install_name_tool -change " .. paths[1] .. " "
-                     .. paths[2] .. " " .. target
-                  exec (arg)
-               end
-            end
-            if libs then
-               process_mac_preqs (libs, processed, installPaths)
-            end
-         end
-      end
-   end
-end
---]]
 
 local function main_mac (files)
    local targetName = resolve ("$(lmk.binDir)" .. files[1])

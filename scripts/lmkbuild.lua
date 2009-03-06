@@ -24,6 +24,8 @@ set_local = lmk.set_local
 set_global = lmk.set_global
 system = lmk.system
 is_dir = lmkbase.is_dir
+directories = lmkbase.directories
+files = lmkbase.files
 
 local buildPart1 = nil
 local buildPart2 = nil
