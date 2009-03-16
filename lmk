@@ -46,14 +46,15 @@ echo "Starting in: $START_DIR"
 echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 cd $START_DIR
 
-export LUA_PATH="$LMK_HOME/scripts/?.lua;$LMK_HOME/scripts/src/?.lua;;"
-export LUA_CPATH="$LMK_HOME/bin/`uname`/?.so;$LMK_HOME/bin/win32/?.dll;;"
-
 if [ -d $LMK_HOME/bin/`uname` ] ; then
    export LMK_BIN_HOME=$LMK_HOME/bin/`uname` ;
 elif [ `uname -o` = "Cygwin" ] ; then
+   export LMK_HOME=`cygpath -w $LMK_HOME`
    export LMK_BIN_HOME=$LMK_HOME/bin/win32 ;
 fi
+
+export LUA_PATH="$LMK_HOME/scripts/?.lua;$LMK_HOME/scripts/src/?.lua;;"
+export LUA_CPATH="$LMK_HOME/bin/`uname`/?.so;$LMK_HOME/bin/win32/?.dll;;"
 
 if [ "$LMK_BIN_HOME" = "" ] ; then
    echo LMK_BIN_HOME not found ;
