@@ -1,18 +1,55 @@
 #!/bin/sh
 
+START_DIR=`pwd`
+
+while [ "`pwd`" != "/" -a "$SRC_LOCATION" = "" ] ; do
+
+    if [ -d ./lmkproject -a -d ./src ] ; then
+
+       SRC_LOCATION=`pwd`/src
+
+    else
+
+       cd ..
+
+    fi
+
+done
+
 if [ "$LMK_HOME" = "" ] ; then
-   export LMK_HOME="/lmk" ;
-   echo 'LMK_HOME not defined. Using:' $LMK_HOME ;
+
+   if [ "$SRC_LOCATION" = "" ] ; then
+
+      if [ -d "$HOME/cm/src/lmk" ] ; then
+
+         LMK_HOME=$HOME/cm/src/lmk
+
+      else
+
+         echo "Unable to locate interfacegen. Please set the LMK_HOME environment variable if it is not installed in a default location."
+
+         exit -1
+
+      fi
+
+   else
+      LMK_HOME=$SRC_LOCATION/lmk
+   fi
+
 fi
 
-export LUA_PATH="$LMK_HOME/scripts/?.lua;$LMK_HOME/scripts/src/?.lua;;"
-export LUA_CPATH="$LMK_HOME/bin/`uname`/?.so;$LMK_HOME/bin/win32/?.dll;;"
+cd $START_DIR
 
 if [ -d $LMK_HOME/bin/`uname` ] ; then
    export LMK_BIN_HOME=$LMK_HOME/bin/`uname` ;
 elif [ `uname -o` = "Cygwin" ] ; then
+   # NOTE: cygpath converts the path from Unix to Win32 format so that lua.exe can
+   #       understand it.
+   export LMK_HOME=`cygpath -w $LMK_HOME`
    export LMK_BIN_HOME=$LMK_HOME/bin/win32 ;
 fi
+
+export LUA_PATH="$LMK_HOME/scripts/?.lua;$LMK_HOME/scripts/src/?.lua;;"
 
 if [ "$LMK_BIN_HOME" = "" ] ; then
    echo LMK_BIN_HOME not found ;

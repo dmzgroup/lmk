@@ -48,13 +48,16 @@ cd $START_DIR
 
 if [ -d $LMK_HOME/bin/`uname` ] ; then
    export LMK_BIN_HOME=$LMK_HOME/bin/`uname` ;
+   export LUA_CPATH="$LMK_HOME/bin/`uname`/?.so;;"
 elif [ `uname -o` = "Cygwin" ] ; then
+   # NOTE: cygpath converts the path from Unix to Win32 format so that lua.exe can
+   #       understand it.
    export LMK_HOME=`cygpath -w $LMK_HOME`
    export LMK_BIN_HOME=$LMK_HOME/bin/win32 ;
+   export LUA_CPATH="$LMK_HOME/bin/win32/?.dll;;"
 fi
 
 export LUA_PATH="$LMK_HOME/scripts/?.lua;$LMK_HOME/scripts/src/?.lua;;"
-export LUA_CPATH="$LMK_HOME/bin/`uname`/?.so;$LMK_HOME/bin/win32/?.dll;;"
 
 if [ "$LMK_BIN_HOME" = "" ] ; then
    echo LMK_BIN_HOME not found ;
