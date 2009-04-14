@@ -1,6 +1,7 @@
 require "lmkbuild"
 
 local append_table = lmkbuild.append_table
+local abs_path = lmkbuild.abs_path
 local get_dirs = lmkbuild.directories
 local exec = lmkbuild.exec
 local get_files = lmkbuild.files
@@ -11,9 +12,9 @@ local io = io
 local ipairs = ipairs
 local is_dir = lmkbuild.is_dir
 local is_valid = lmkbuild.is_valid
+local ln = lmkbuild.cp
 local mkdir = lmkbuild.mkdir
 local cp = lmkbuild.cp
-local copy_file = lmkbuild.copy_file
 local print = print
 local resolve = lmkbuild.resolve
 local rm = lmkbuild.rm
@@ -22,11 +23,19 @@ local split = lmkbuild.split_path_and_file
 local system = lmkbuild.system ()
 local tostring = tostring
 
+if system ~= "win32" then
+ln = function (src, target)
+   local absSrc = abs_path (resolve (src))
+   exec ("ln -s " .. absSrc .. " " .. target)
+end
+end
+
 module (...)
 
 local data = {}
 
-local function local_copy (src, target)
+local function local_copy (src, target, cpfunc)
+   if not cpfunc then cpfunc = cp end
    local isNewer = false
    src = resolve (src)
    target = resolve (target)
@@ -35,7 +44,7 @@ local function local_copy (src, target)
          local path, file = split (src)
          target = target .. "/" .. file
       end
-      if file_newer (src, target) then cp (src, target); isNewer = true end
+      if file_newer (src, target) then cpfunc (src, target); isNewer = true end
    else target = nil
    end
    return target, isNewer
@@ -195,7 +204,7 @@ local function main_mac (files)
          if not is_valid (item) then
             item = resolve ("$(lmk.projectRoot)" .. item)
          end
-         if is_valid (item) then local_copy (item, dataTarget)
+         if is_valid (item) then local_copy (item, dataTarget, ln)
          else print ("ERROR: Invalid data item: " .. item)
          end
       end
