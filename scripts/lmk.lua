@@ -658,3 +658,13 @@ end
 function system ()
    return gSystem
 end
+
+function merge_tables (t1, t2)
+    if type (t1) == "table" and type (t2) == "table" then
+      for index, value in pairs (t2) do
+         t1[index] = value
+      end
+   elseif type (t1) ~= "table" then t1 = {}
+   end
+   return t1
+end
