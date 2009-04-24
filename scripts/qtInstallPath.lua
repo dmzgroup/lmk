@@ -32,6 +32,7 @@ local list = {
   "@executable_path/../Frameworks/Qt/QtNetwork"},
 { "QtOpenGL.framework/Versions/4/QtOpenGL", "@executable_path/../Frameworks/Qt/QtOpenGL"},
 { "QtScript.framework/Versions/4/QtScript", "@executable_path/../Frameworks/Qt/QtScript"},
+{ "QtScriptTools.framework/Versions/4/QtScriptTools", "@executable_path/../Frameworks/Qt/QtScriptTools"},
 { "QtSql.framework/Versions/4/QtSql", "@executable_path/../Frameworks/Qt/QtSql"},
 { "QtSvg.framework/Versions/4/QtSvg", "@executable_path/../Frameworks/Qt/QtSvg"},
 { "QtTest.framework/Versions/4/QtTest", "@executable_path/../Frameworks/Qt/QtTest"},
