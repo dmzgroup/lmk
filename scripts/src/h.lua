@@ -24,10 +24,13 @@ function main (files)
       append ("localIncludes", "$(lmk.includePathFlag)$(lmk.includeDir)$(name)/")
    end
    for index, item in ipairs (files) do
-      item = resolve (item)
-      p, f, e = split (item)
+      local file = nil
+      local item = resolve (item)
+      local p, f, e = split (item)
       if sys == "iphone" then file = "$(lmk.includeDir)dmz/" .. f .. "." .. e
-      else file = "$(lmk.includeDir)$(name)/" .. f .. "." .. e
+      else
+         file = "$(lmk.includeDir)$(name)/" .. f
+         if e then file = file .. "." .. e end
       end
       if file_newer (item, file) then
          print ("Exporting: " .. item)
@@ -44,9 +47,13 @@ end
 
 function clean (files)
    for index, item in ipairs (files) do
-      local p, file, e = split (item)
+      local file = nil
+      local p, f, e = split (item)
       if sys == "iphone" then file = resolve ("$(lmk.includeDir)dmz/" .. f .. "." .. e)
-      else file = resolve ("$(lmk.includeDir)$(name)/" .. f .. "." .. e)
+      else
+         if e then file = resolve ("$(lmk.includeDir)$(name)/" .. f .. "." .. e)
+         else file = resolve ("$(lmk.includeDir)$(name)/" .. f)
+         end
       end
       if is_valid (file) then rm (file) end
    end
