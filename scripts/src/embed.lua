@@ -22,6 +22,8 @@ function main (files)
    if (not name) or (name == "") then name = resolve ("$(name)") end
    local root = resolve ("$(embedRoot)")
    if (not root) or (root == "")  then root = name end
+   local ns = resolve ("$(embedNamespace)")
+   local useNs = (ns ~= "")
    local countFunc = "get_" .. root .. "_count"
    local getFunc = "get_" .. root .. "_text"
    local fileFunc = "get_" .. root .. "_file_name"
@@ -45,14 +47,18 @@ function main (files)
          fout:write ("#else\n")
          fout:write ("#      define " .. macroLink .. "\n")
          fout:write ("#endif\n\n")
-         fout:write ("namespace dmz {\n\n")
+         if useNs then
+            fout:write ("namespace " .. ns .. " {\n\n")
+         end
          fout:write (macroLink .. " int\n")
          fout:write (countFunc .. " ();\n\n")
          fout:write (macroLink .. " const char*\n")
          fout:write (getFunc .. " (const int Which);\n\n")
          fout:write (macroLink .. " const char*\n")
          fout:write (fileFunc .. " (const int Which);\n\n")
-         fout:write ("};\n\n")
+         if useNs then
+            fout:write ("};\n\n")
+         end
          fout:write ("#endif // " .. macroHeader .. "\n")
          io.close (fout)
          add_files {target}
@@ -62,6 +68,8 @@ function main (files)
    if file_newer (files, target) then
       local fout = io.open (target, "w")
       if fout then
+         local scope = ""
+         if useNs then scope = ns .. "::" end
          fout:write ("// WARNING: Auto Generated File. DO NOT EDIT.\n\n")
          fout:write ("#define " .. macroExport .. "\n")
          fout:write ("#include <" .. name .. ".h>\n\n")
@@ -98,10 +106,10 @@ function main (files)
          end
          fout:write ("};\n\n\n")
          fout:write ("int\n")
-         fout:write ("dmz::".. countFunc .. " () { return " .. tostring (#files) ..
+         fout:write (scope .. countFunc .. " () { return " .. tostring (#files) ..
             "; }\n\n\n")
          fout:write ("const char *\n")
-         fout:write ("dmz::" .. getFunc .. " (const int Which) {\n\n")
+         fout:write (scope .. getFunc .. " (const int Which) {\n\n")
          fout:write ("   switch (Which) {\n")
          for ix = 1, #files do
             fout:write ("      case " .. tostring (ix - 1) .. ": return text" ..
@@ -110,7 +118,7 @@ function main (files)
          fout:write ("      default: return 0;\n")
          fout:write ("   }\n\n   return 0;\n}\n\n\n")
          fout:write ("const char *\n")
-         fout:write ("dmz::" .. fileFunc .. " (const int Which) {\n\n")
+         fout:write (scope .. fileFunc .. " (const int Which) {\n\n")
          fout:write ("   switch (Which) {\n")
          for index, inFile in ipairs (files) do
             fout:write ("      case " .. tostring (index - 1) .. ': return "' ..
