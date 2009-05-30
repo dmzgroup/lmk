@@ -25,19 +25,17 @@ function main (files)
    local countFunc = "get_" .. root .. "_count"
    local getFunc = "get_" .. root .. "_text"
    local fileFunc = "get_" .. root .. "_file_name"
+   local macroName = name:gsub ("(%w)(%u%l)", "%1_%2"):gsub ("(%l)(%u)", "%1_%2"):upper ()
+   local macroHeader = macroName .. "_DOT_H"
+   local macroExport = macroName .. "_EXPORT"
+   local macroLink = macroName .. "_LINK_SYMBOL"
    local target = name .. ".h"
    if file_newer (files, target) then
       fout = io.open (target, "w")
       if fout then
-         local macroName = name:gsub ("(%w)(%u%l)", "%1_%2"):
-            gsub ("(%l)(%u)", "%1_%2"):upper ()
-         local macroHeader = macroName .. "_DOT_H"
-         local macroExport = macroName .. "_EXPORT"
-         local macroLink = macroName .. "_LINK_SYMBOL"
          fout:write ("// WARNING: Auto Generated File. DO NOT EDIT.\n\n")
          fout:write ("#ifndef " .. macroHeader .. "\n")
          fout:write ("#define " .. macroHeader .. "\n\n")
-         fout:write ("#include <dmzTypesBase.h>\n\n")
          fout:write ("#ifdef _WIN32\n")
          fout:write ("#   ifdef " .. macroExport .. "\n")
          fout:write ("#      define " .. macroLink .. " __declspec (dllexport)\n")
@@ -48,12 +46,12 @@ function main (files)
          fout:write ("#      define " .. macroLink .. "\n")
          fout:write ("#endif\n\n")
          fout:write ("namespace dmz {\n\n")
-         fout:write (macroLink .. " Int32\n")
+         fout:write (macroLink .. " int\n")
          fout:write (countFunc .. " ();\n\n")
          fout:write (macroLink .. " const char*\n")
-         fout:write (getFunc .. " (const Int32 Which);\n\n")
+         fout:write (getFunc .. " (const int Which);\n\n")
          fout:write (macroLink .. " const char*\n")
-         fout:write (fileFunc .. " (const Int32 Which);\n\n")
+         fout:write (fileFunc .. " (const int Which);\n\n")
          fout:write ("};\n\n")
          fout:write ("#endif // " .. macroHeader .. "\n")
          io.close (fout)
@@ -65,13 +63,13 @@ function main (files)
       local fout = io.open (target, "w")
       if fout then
          fout:write ("// WARNING: Auto Generated File. DO NOT EDIT.\n\n")
+         fout:write ("#define " .. macroExport .. "\n")
          fout:write ("#include <" .. name .. ".h>\n\n")
-         fout:write ("#include <dmzTypesBase.h>\n\n")
          fout:write ("namespace {\n\n")
          for index, inFile in ipairs (files) do
             local count = 0
             fout:write ("// " .. inFile .. "\n")
-            fout:write ("static const char data" .. index .. "[] = {\n")
+            fout:write ("static const char text" .. index .. "[] = {\n")
             local instr = nil
             local fin = io.open (inFile, "r")
             if fin then
@@ -99,20 +97,20 @@ function main (files)
             fout:write ("  0\n};\n\n")
          end
          fout:write ("};\n\n\n")
-         fout:write ("dmz::Int32\n")
+         fout:write ("int\n")
          fout:write ("dmz::".. countFunc .. " () { return " .. tostring (#files) ..
             "; }\n\n\n")
          fout:write ("const char *\n")
-         fout:write ("dmz::" .. getFunc .. " (const Int32 Which) {\n\n")
+         fout:write ("dmz::" .. getFunc .. " (const int Which) {\n\n")
          fout:write ("   switch (Which) {\n")
          for ix = 1, #files do
-            fout:write ("      case " .. tostring (ix - 1) .. ": return data" ..
+            fout:write ("      case " .. tostring (ix - 1) .. ": return text" ..
                tostring (ix) .. "; break;\n")
          end
          fout:write ("      default: return 0;\n")
          fout:write ("   }\n\n   return 0;\n}\n\n\n")
          fout:write ("const char *\n")
-         fout:write ("dmz::" .. fileFunc .. " (const Int32 Which) {\n\n")
+         fout:write ("dmz::" .. fileFunc .. " (const int Which) {\n\n")
          fout:write ("   switch (Which) {\n")
          for index, inFile in ipairs (files) do
             fout:write ("      case " .. tostring (index - 1) .. ': return "' ..
