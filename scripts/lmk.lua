@@ -107,7 +107,7 @@ local function append_table (target, add)
    if type (target) == "string" then
       error ("Expect table but was given string: " .. target) end
    local size = #target
-   if type (add) == "string" then target[size + 1] = add
+   if type (add) ~= "table" then target[size + 1] = add
    else for ix = 1, #add do target[size + ix] = add[ix] end
    end
 end
@@ -165,7 +165,7 @@ local function set_build_funcs (info)
          for index, value in pairs (vars) do
             if not info[index] then info[index] = value
             else
-               if type (info[index]) == "string" then info[index] = { info[index] } end
+               if type (info[index]) ~= "table" then info[index] = { info[index] } end
                append_table (info[index], value)
             end
          end
@@ -638,8 +638,8 @@ end
 function get_var (name)
    local result = nil
    if gLocalEnv then result = find_data (gLocalEnv, name) end
-   if not result and gEnv then result = find_data (gEnv, name) end
-   if result and type (result) ~= "table" then result = { result } end
+   if result == nil and gEnv then result = find_data (gEnv, name) end
+   if result ~= nil and type (result) ~= "table" then result = { result } end
    return result
 end
 
