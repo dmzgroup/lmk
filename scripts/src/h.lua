@@ -51,9 +51,8 @@ function clean (files)
       local p, f, e = split (item)
       if sys == "iphone" then file = resolve ("$(lmk.includeDir)dmz/" .. f .. "." .. e)
       else
-         if e then file = resolve ("$(lmk.includeDir)$(name)/" .. f .. "." .. e)
-         else file = resolve ("$(lmk.includeDir)$(name)/" .. f)
-         end
+         file = "$(lmk.includeDir)$(name)/" .. f
+         if e then file = file .. "." .. e end
       end
       if is_valid (file) then rm (file) end
    end
