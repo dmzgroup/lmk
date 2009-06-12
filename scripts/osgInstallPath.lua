@@ -1,11 +1,12 @@
 require "lmkbase"
 require "lmkutil"
 
-local OldPath = "/Users/barker/3rdparty/OpenSceneGraph-2.8.0/lib/Release/"
+local OldPath = "/Users/barker/3rdparty/OpenSceneGraph-2.8.1/lib/Release/"
 local NewPath = "@executable_path/../Frameworks/osg/"
 local libs = {
 "libOpenThreads.dylib",
 "libosg.dylib",
+"libosgAnimation.dylib",
 "libosgDB.dylib",
 "libosgFX.dylib",
 "libosgGA.dylib",
@@ -17,6 +18,7 @@ local libs = {
 "libosgText.dylib",
 "libosgUtil.dylib",
 "libosgViewer.dylib",
+"libosgVolume.dylib",
 "libosgWidget.dylib",
 }
 

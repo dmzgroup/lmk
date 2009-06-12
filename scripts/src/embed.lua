@@ -73,9 +73,9 @@ function main (files)
          end
          fout:write ("#endif // " .. macroHeader .. "\n")
          io.close (fout)
-         add_files {target}
       end
    end
+   add_files {target}
    target = name .. ".cpp"
    if file_newer (files, target) then
       local fout = io.open (target, "w")
@@ -153,10 +153,10 @@ function main (files)
          fout:write ("      default: return 0;\n")
          fout:write ("   }\n\n   return 0;\n}\n\n\n")
          io.close (fout)
-         add_files {target}
       else error ("Unable to create file: " .. target)
       end
    end
+   add_files {target}
 end
 
 function test (files)
