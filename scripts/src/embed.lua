@@ -75,7 +75,7 @@ function main (files)
          io.close (fout)
       end
    end
-   add_files {target}
+   if export then add_files {target} end
    target = name .. ".cpp"
    if file_newer (files, target) then
       local fout = io.open (target, "w")
@@ -87,7 +87,9 @@ function main (files)
          if export then
             fout:write ("#define " .. macroExport .. "\n")
          end
-         fout:write ("#include <" .. name .. ".h>\n\n")
+         if export then fout:write ("#include <" .. name .. ".h>\n\n")
+         else fout:write ('#include "' .. name .. '.h"\n\n')
+         end
          fout:write ("namespace {\n\n")
          for index, inFile in ipairs (files) do
             local count = 0
