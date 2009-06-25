@@ -1,6 +1,7 @@
 require "lmkbuild"
 
 local add_files = lmkbuild.add_files
+local append = lmkbuild.append_local
 local error = error
 local file_newer = lmkbuild.file_newer
 local get_var = lmkbuild.get_var
@@ -37,8 +38,11 @@ function main (files)
    local macroHeader = macroName .. "_DOT_H"
    local macroExport = macroName .. "_EXPORT"
    local macroLink = macroName .. "_LINK_SYMBOL"
-   if not export then macroLink = "" end
-   local target = name .. ".h"
+   if not export then
+      append ("localIncludes", "$(lmk.includePathFlag)$(localTmpDir)")
+      macroLink = ""
+   end
+   local target = resolve ("$(localTmpDir)" ..  name .. ".h")
    if file_newer (files, target) then
       fout = io.open (target, "w")
       if fout then
@@ -76,7 +80,7 @@ function main (files)
       end
    end
    if export then add_files {target} end
-   target = name .. ".cpp"
+   target = resolve ("$(localTmpDir)" ..  name .. ".cpp")
    if file_newer (files, target) then
       local fout = io.open (target, "w")
       if fout then
