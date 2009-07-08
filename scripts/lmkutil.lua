@@ -91,7 +91,7 @@ end
 function raw_mkdir (path)
    local result = true
    if not lmkbase.is_valid (path) then
-print ("mkdir path: " .. path)
+      -- print ("mkdir path: " .. path)
       local root = false
       local slash =  path:sub (1, 1)
       if (slash == "/") or (slash == "\\") then root = true end

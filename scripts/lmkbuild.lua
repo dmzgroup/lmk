@@ -3,6 +3,7 @@ require "lmkutil"
 require "lmkbase"
 
 local assert = assert
+local error = error
 local io = io
 local ipairs = ipairs
 local lmk = lmk
@@ -26,6 +27,8 @@ system = lmk.system
 is_dir = lmkbase.is_dir
 directories = lmkbase.directories
 files = lmkbase.files
+
+function verbose () return lmk.IsVerbose end
 
 local buildPart1 = nil
 local buildPart2 = nil
@@ -161,9 +164,17 @@ function exec (list)
    for index, item in ipairs (list) do
       local todo = resolve (item)
       assert (todo and todo ~= "", "Empty exec string from: " .. item)
-      print (todo)
-      local result = os.execute (todo)
-      assert (result == 0, "Build faild in " .. lmkbase.pwd ())
+      if lmk.IsVerbose then
+         print (todo)
+         local result = os.execute (todo)
+         assert (result == 0, "Build faild in " .. lmkbase.pwd ())
+      else
+         local result = os.execute (todo)
+         if result ~= 0 then
+            print (todo)
+            error ("Build failded in " .. lmkbase.pwd ())
+         end
+      end
    end
 end
 

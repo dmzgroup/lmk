@@ -30,7 +30,7 @@ if [ "$LMK_HOME" = "" ] ; then
 
       else
 
-         echo "Unable to locate lmk. Please set the LMK_HOME environment variable if it is not installed in a default location."
+         echo "Unable to locate lmk. Please set the LMK_HOME environment variable if lmk is not installed in a default location."
 
          exit -1
 
@@ -68,6 +68,6 @@ if [ "$LMK_LUA" = "" ] ; then
    export LMK_LUA=$LMK_BIN_HOME/lua ;
 fi
 
-echo $LMK_LUA $LMK_HOME/scripts/lmkapp.lua $* ;
+#echo $LMK_LUA $LMK_HOME/scripts/lmkapp.lua $* ;
 "$LMK_LUA" $LMK_HOME/scripts/lmkapp.lua $* ;
 

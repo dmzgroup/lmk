@@ -12,6 +12,7 @@ local resolve = lmkbuild.resolve
 local rm = lmkbuild.rm
 local split = lmkbuild.split
 local sys = lmkbuild.system ()
+local verbose = lmkbuild.verbose
 
 module (...)
 
@@ -33,7 +34,7 @@ function main (files)
          if e then file = file .. "." .. e end
       end
       if file_newer (item, file) then
-         print ("Exporting: " .. item)
+         if verbose () then  print ("Exporting: " .. item) end
          assert (
             cp (item, file),
             "Failed copying file: " .. item .. " to " .. resolve (file))

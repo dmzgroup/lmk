@@ -9,6 +9,7 @@ local io = io
 local ipairs = ipairs
 local lmkbase = lmkbase
 local lmkutil = lmkutil
+local math = math
 local os = os
 local pairs = pairs
 local pcall = pcall
@@ -22,6 +23,9 @@ local package = package
 
 module (...)
 
+-- globals
+IsVerbose = false
+
 -- local globals
 local gProjectName = "lmkproject"
 local gLMKFilesName = "lmkfiles.lua"
@@ -32,6 +36,8 @@ local gPersistEnv = {}
 gPersistEnv[lmkbase.system ()] = true
 gPersistEnv["platform"] = lmkbase.system ()
 local gLocalEnv = {}
+local gProcessedFileCount = 0
+local gFileCount = 1
 local gFiles = {}
 local gInProgress = 1
 local gBuilt = 2
@@ -277,8 +283,23 @@ local function process_info (info)
    return result, msg
 end
 
+local function print_unit (name)
+   gProcessedFileCount = gProcessedFileCount + 1
+   if IsVerbose then
+      print ("** Processing[" .. math.floor (gProcessedFileCount / gFileCount * 100)
+         .. "%]: " .. name)
+   else
+      io.write (
+         " [",
+         math.floor (gProcessedFileCount / gFileCount * 100),
+         "%] ",
+         name,
+         "                         \r")
+      io.flush ()
+   end
+end
+
 local function exec_lmk_file (path, file)
-   print ("Processing: " .. file)
    local result, msg = lmkutil.pushd (path)
    if result then
       local info = {}
@@ -292,6 +313,7 @@ local function exec_lmk_file (path, file)
                if result then result, msg = build_depends (info.preqs) end
                if result then result, msg = build_depends (info.libs) end
                if result then
+                  print_unit (info.name)
                   result, msg = process_info (info)
                   if result then gFiles[info.name].status = gBuilt end
                end
@@ -310,6 +332,7 @@ local function exec_lmk_file (path, file)
                   gFiles[info.name].file
             end
          end
+      else gProcessedFileCount = gProcessedFileCount + 1
       end
       lmkutil.popd ()
    end
@@ -347,8 +370,12 @@ function set_global_env (globals)
    for index, value in pairs (gPersistEnv) do gEnv[index] = value end
 end
 
-function set_lmkfiles (files)
+function set_lmkfiles (files, fileCount)
    gFiles = files
+   gProcessedFileCount = 0
+   if fileCount and fileCount > 0 then gFileCount = fileCount
+   else print ("Update your lmk project by running lmk -u")
+   end
 end
 
 local originalSearchPath = package.path
@@ -361,8 +388,10 @@ end
 function update (path)
    if not path then path = gProjectRoot and gProjectRoot or lmkutil.pwd () end
    local result, msg = init_project_path (path)
+   local fileCount = 0
    if result and lmkutil.pushd (gProjectRoot) then
       local files = {}
+      print ("Updating lmk project.")
       local searchPath = add_lmk_files (gProjectRoot, files)
       if searchPath and searchPath:len () > 0 then set_luapath (searchPath) end
       local info = {}
@@ -372,7 +401,9 @@ function update (path)
          info.name = nil
          dofile (element.path .. element.file)
          if info.name then
-            if not list[info.name] then list[info.name] = element
+            if not list[info.name] then
+               fileCount = fileCount + 1
+               list[info.name] = element
             else
                result = false
                msg = "Error: Name " .. "'" .. info.name ..
@@ -392,12 +423,12 @@ function update (path)
             end
             out:write ("lmk.set_lmkfiles ({\n")
             for index, element in pairs (list) do
-               print (index .. " = " .. element.path .. "/" .. element.file)
+               --print (index .. " = " .. element.path .. element.file)
                out:write ("\n   " .. index .. " = {\n")
                out:write ("      path = \"" .. element.path .. "\",\n")
                out:write ("      file = \"" .. element.file .. "\"\n   },\n")
             end
-            out:write ("})\n")
+            out:write ("}, " .. fileCount .. ")\n")
             out:close ()
          else
             result = false
@@ -436,10 +467,11 @@ end
 
 function set_process_func_name (name)
    gProcessFuncName = name
-   print ("Setting process function name to: " .. gProcessFuncName);
+   print ("Setting process function name: " .. gProcessFuncName);
 end
 
 function set_build_mode (name)
+   print ("Setting build mode: " .. name)
    set_global ("lmk.buildMode", name, true)
    local currentMode = gPersistEnv.currentBuildMode
    if currentMode then
@@ -456,6 +488,8 @@ function set_recurse (recurse)
    else gRecurse = false
    end
 end
+
+function set_verbose (verbose) IsVerbose = verbose end
 
 local function build_dir (path, recurse)
    local result, msg = true, nil
@@ -490,6 +524,7 @@ end
 function build (path)
    local result, msg = init (path)
    if result then
+      print ("Building lmk project.")
       local isDir = path and lmkbase.is_dir (path) or false
       if lmkutil.pushd (path and path or gProjectRoot) then
          require "lmkprebuild"
@@ -534,7 +569,7 @@ function build (path)
             (path and path or gProjectRoot)
       end
    end
---lmkutil.dump_table ("gEnv", gEnv)
+   --lmkutil.dump_table ("gEnv", gEnv)
    return result, msg
 end
 
