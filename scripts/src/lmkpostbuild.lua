@@ -1,30 +1,30 @@
-
-local print = print
+local lf = print
+local print = lmkbuild.print_success
 
 module (...)
 
 function main ()
-   print ("")
+   lf ("")
    print ("Build completed successfully")
 end
 
 function test (files)
-   print ("")
+   lf ("")
    print ("Unit tests completed successfully")
 end
 
 function clean (files)
-   print ("")
+   lf ("")
    print ("Clean completed successfully")
 end
 
 function clobber (files)
-   print ("")
+   lf ("")
    print ("Clobber completed successfully")
 end
 
 function distclean (files)
-   print ("")
+   lf ("")
    print ("Distclean completed successfully")
 end
 

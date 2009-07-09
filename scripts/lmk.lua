@@ -5,6 +5,7 @@ require "lmkutil"
 local _G = _G
 local assert = assert
 local dofile = dofile
+local lua_error = error
 local io = io
 local ipairs = ipairs
 local lmkbase = lmkbase
@@ -26,6 +27,12 @@ module (...)
 -- globals
 IsVerbose = false
 
+ConsoleRed = ""
+ConsoleGreen = ""
+ConsoleYellow = ""
+ConsoleBlue = ""
+ConsoleDefault = ""
+
 -- local globals
 local gProjectName = "lmkproject"
 local gLMKFilesName = "lmkfiles.lua"
@@ -45,6 +52,26 @@ local gProcessFuncName = "main"
 local gRecurse = false
 
 -- exported functions used in lmk files
+function error (msg) lua_error (ConsoleRed .. msg .. ConsoleDefault) end
+
+function set_verbose_mode (mode) IsVerbose = mode end
+
+function set_color_mode (mode)
+   if mode then
+      ConsoleRed = "\027[0;31m"
+      ConsoleGreen = "\027[0;1;32m"
+      ConsoleYellow = "\027[0;1;33m"
+      ConsoleBlue = "\027[0;1;34m"
+      ConsoleDefault = "\027[0m"
+   else
+      ConsoleRed = ""
+      ConsoleGreen = ""
+      ConsoleYellow = ""
+      ConsoleBlue = ""
+      ConsoleDefault = ""
+   end
+end
+
 local function noop () print ("Error: no op function called") end
 set_name = noop
 set_type = noop
@@ -130,7 +157,9 @@ local function add_files_to_info (info, files, src)
          info.srcIndex[#(info.srcIndex) + 1] = info.src[src]
       else append_table (info.src[src].files, files)
       end
-   else print ("Error: Unable to detect type of file: " .. files[1])
+   else
+      print (ConsoleRed .. "Error: Unable to detect type of file: " .. files[1] ..
+         ConsoleDefault)
    end
 end
 
@@ -291,7 +320,9 @@ local function print_unit (name)
    else
       io.write (
          " [",
+         ConsoleRed,
          math.floor (gProcessedFileCount / gFileCount * 100),
+         ConsoleDefault,
          "%] ",
          name,
          "                         \r")

@@ -28,6 +28,14 @@ is_dir = lmkbase.is_dir
 directories = lmkbase.directories
 files = lmkbase.files
 
+function print_success (msg)
+   print (lmk.ConsoleGreen .. msg .. lmk.ConsoleDefault)
+end
+
+function print_fail (msg)
+   print (lmk.ConsoleRed .. msg .. lmk.ConsoleDefault)
+end
+
 function verbose () return lmk.IsVerbose end
 
 local buildPart1 = nil
