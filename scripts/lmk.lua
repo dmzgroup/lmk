@@ -293,8 +293,6 @@ local function process_info (info)
                require (data.src)
                if not result then done = true
                elseif _G[data.src] and _G[data.src][gProcessFuncName] then
--- Moved up where it will always be set
---                  info.localPwd = lmkutil.pwd ()
                   _G[data.src][gProcessFuncName] (data.files)
                   if not result then done = true end
                end
@@ -314,18 +312,23 @@ end
 
 local function print_unit (name)
    gProcessedFileCount = gProcessedFileCount + 1
+   local value = math.floor (gProcessedFileCount / gFileCount * 100)
+   if value < 10 then value = "  " .. value
+   elseif value < 100 then value = " " .. value
+   end
    if IsVerbose then
-      print ("** Processing[" .. math.floor (gProcessedFileCount / gFileCount * 100)
-         .. "%]: " .. name)
+      print ("** Processing[" .. ConsoleRed .. value .. "%" .. ConsoleDefault ..
+         "]: " .. name)
    else
       io.write (
          " [",
          ConsoleRed,
-         math.floor (gProcessedFileCount / gFileCount * 100),
+         value,
+         "%",
          ConsoleDefault,
-         "%] ",
+         "] ",
          name,
-         "                         \r")
+         "                               \r")
       io.flush ()
    end
 end
