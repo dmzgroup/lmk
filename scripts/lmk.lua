@@ -25,7 +25,7 @@ local package = package
 module (...)
 
 -- globals
-IsVerbose = false
+IsVerbose = (lmkbase.system () == "win32" and true or false)
 
 ConsoleRed = ""
 ConsoleGreen = ""
@@ -317,8 +317,9 @@ local function print_unit (name)
    elseif value < 100 then value = " " .. value
    end
    if IsVerbose then
-      print ("** Processing[" .. ConsoleRed .. value .. "%" .. ConsoleDefault ..
-         "]: " .. name)
+      print (ConsoleYellow .. "Processing" .. ConsoleDefault .. "[" .. ConsoleRed ..
+         value .. "%" .. ConsoleDefault ..  "]: " .. name .. " " ..
+         gProcessedFileCount .. "/" .. gFileCount)
    else
       io.write (
          " [",
@@ -347,7 +348,7 @@ local function exec_lmk_file (path, file)
                if result then result, msg = build_depends (info.preqs) end
                if result then result, msg = build_depends (info.libs) end
                if result then
-                  print_unit (info.name)
+                  print_unit (file) --info.name)
                   result, msg = process_info (info)
                   if result then gFiles[info.name].status = gBuilt end
                end
@@ -366,7 +367,7 @@ local function exec_lmk_file (path, file)
                   gFiles[info.name].file
             end
          end
-      else gProcessedFileCount = gProcessedFileCount + 1
+      else print_unit (file) --gProcessedFileCount = gProcessedFileCount + 1
       end
       lmkutil.popd ()
    end
