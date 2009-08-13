@@ -138,7 +138,7 @@ end
 
 local function append_table (target, add)
    if type (target) == "string" then
-      error ("Expect table but was given string: " .. target) end
+      error ("Expected table but was given string: " .. target) end
    local size = #target
    if type (add) ~= "table" then target[size + 1] = add
    else for ix = 1, #add do target[size + ix] = add[ix] end
@@ -386,7 +386,9 @@ build_depends = function (depends)
                msg = "Circular library dependency found in: " .. data.path ..
                   data.file
                break
-            else result, msg = exec_lmk_file (data.path, data.file)
+            else
+               result, msg = exec_lmk_file (data.path, data.file)
+               if not data.status then data.status = gBuilt end
             end
          else
             result = false
@@ -581,6 +583,7 @@ function build (path)
             for index, value in pairs (gFiles) do
                if not value.status then
                   result, msg = exec_lmk_file (value.path, value.file)
+                  if not value.status then value.status = gBuilt end
                   if not result then break end
                elseif value.status == gBuilt then
                elseif value.status == gInProgess then
