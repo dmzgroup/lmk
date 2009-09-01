@@ -19,15 +19,15 @@ local function process (target, source)
    local files = lmkbase.files (source)
    if files then
       for i, f in ipairs (files) do
-         if f:find ("^[%w._]*h$") then
+         if f:find ("^[%w%.%-_]*h$") then
 --print ("Found: " .. f)
             local header = io.open (source .. "/" .. f)
             if header then
                for line in header:lines () do
-                  local realFile = line:match ('#include[%s]*"([%w/._]*)"')
+                  local realFile = line:match ('#include[%s]*"([%w/%.%-_]*)"')
                   if realFile then 
                      if lmkbase.is_valid (source .. "/" .. realFile) then
-print (realFile)
+--print (realFile)
                         copy (source .. "/" .. realFile, target, f)
                      else print ("File not valid: " .. source .. "/" .. realFile)
                      end
@@ -36,7 +36,7 @@ print (realFile)
                end
                header:close ()
             end
-         else copy (source .. "/" .. f, target, f)
+         else copy (source .. "/" .. f, target, f) --print (f)
          end
       end
    end
