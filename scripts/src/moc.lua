@@ -21,7 +21,7 @@ gset ("lmk.mocExec", {
 
 module (...)
 
-function main (files)
+function main (files, moconly)
    append ("localIncludes", "$(lmk.includePathFlag).")
    local mocList = {}
    local execList = {}
@@ -39,14 +39,14 @@ function main (files)
       end
    end
    exec (execList)
-   add_files (mocList, "cpp")
+   if not moconly then add_files (mocList, "cpp") end
 end
 
 function test (files)
    main (files)
 end
 
-function clean (files)
+function clean (files, moconly)
    local mocList = {}
    for index, item in ipairs (files) do
       local path, file, ext = split (item)
@@ -54,7 +54,7 @@ function clean (files)
       mocList[#mocList + 1] = resolve ("moc_" .. file .. ".cpp")
       if mocTarget and is_valid (mocTarget) then rm (mocTarget) end
    end
-   add_files (mocList, "cpp")
+   if not moconly then add_files (mocList, "cpp") end
 end
 
 function clobber (files)
