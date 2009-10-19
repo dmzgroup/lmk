@@ -1,20 +1,23 @@
 require "lmkbuild"
+require "xml"
 
 local append_table = lmkbuild.append_table
 local abs_path = lmkbuild.abs_path
-local get_dirs = lmkbuild.directories
+local cp = lmkbuild.cp
 local exec = lmkbuild.exec
-local get_files = lmkbuild.files
 local file_newer = lmkbuild.file_newer
+local get_dirs = lmkbuild.directories
+local get_files = lmkbuild.files
 local get_build_number = lmkbuild.get_build_number
 local get_var = lmkbuild.get_var
 local io = io
 local ipairs = ipairs
 local is_dir = lmkbuild.is_dir
 local is_valid = lmkbuild.is_valid
+local lmk = lmk
 local ln = lmkbuild.cp
 local mkdir = lmkbuild.mkdir
-local cp = lmkbuild.cp
+local pairs = pairs
 local print = print
 local resolve = lmkbuild.resolve
 local rm = lmkbuild.rm
@@ -22,6 +25,7 @@ local set_local = lmkbuild.set_local
 local split = lmkbuild.split_path_and_file
 local system = lmkbuild.system ()
 local tostring = tostring
+local xmlParser = xmlParser
 
 if system ~= "win32" then
 ln = function (src, target)
@@ -54,6 +58,81 @@ function set_app (file, target)
    data = {}
    data.app = file
    data.appTarget = target
+end
+
+local ListToken = "plugin-list"
+local PluginToken = "plugin"
+
+local handler = {
+
+   plugins = {},
+   inList = 0,
+   inPlugin = 0,
+
+reset = function (self)
+   self.plugins = {}
+   self.inList = 0
+   self.inPlugin = 0
+end,
+
+starttag = function (self, val, attrs, startv, endv)
+   if val == ListToken then self.inList = self.inList + 1
+   end
+
+   if self.inList == 1 and val == PluginToken then
+      self.inPlugin = self.inPlugin + 1
+      if not attrs.reserve then
+         if not attrs.platform or attrs.platform:find (system) then
+            if attrs.name and not self.plugins[attrs.name] then
+               self.plugins[attrs.name] = true
+               self.plugins[#(self.plugins) + 1] = attrs.name
+            end
+         end
+      end
+   end
+end,
+
+endtag = function (self, val, attrs, startv, endv)
+   if val == ListToken then self.inList = self.inList - 1
+   elseif val == PluginToken then self.inPlugin = self.inPlugin - 1
+   end
+end,
+}
+
+local function process_target (target, list)
+   if is_valid (target) then
+      if is_dir (target) then
+         local files = get_files (target)
+         if files then
+            for _, file in ipairs (files) do
+               process_target (target .. "/" .. file, list)
+            end
+         end
+         local dirs = get_dirs (target)
+         if dirs then
+            for _, path in ipairs (dirs) do
+               process_target (target .. "/" .. path, list)
+            end
+         end
+      elseif target:find ("%.xml$", -4) then
+         handler:reset ()
+         handler.plugins = list
+         local parser = xmlParser (handler)
+         local file = io.open (target)
+         if file then
+            parser:parse (file:read ("*a"))
+            file:close ()
+         end
+      end
+   end
+end
+
+function build_preqs (sources)
+   local list = {}
+   for index, target in ipairs (sources) do
+      process_target (target, list) 
+   end
+   lmk.add_preqs (list)
 end
 
 function set_plist (file)
