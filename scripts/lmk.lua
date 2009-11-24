@@ -249,7 +249,7 @@ local function init_project_path (path)
    return result, msg
 end
 
-local function add_lmk_files (path, table)
+local function add_lmk_files (path, table, gfiles)
    local result = ""
    lmkbase.cd (path)
    local files = lmkbase.files (path)
@@ -259,7 +259,10 @@ local function add_lmk_files (path, table)
       for ix, element in ipairs (files) do
          if element:find ("%.lmk$", -4) then
             table[#table + 1] = { path = path, file = element }
-         elseif luaPathFound and element:find ("%.lua$", -4) then luaFound = true
+         elseif luaPathFound and element:find ("%.lua$", -4) then
+            if element == "global.lua" then gfiles[#gfiles + 1] = path .. element
+            else luaFound = true
+            end
          end
       end
       if luaFound then result = path .. "?.lua;" end
@@ -267,7 +270,7 @@ local function add_lmk_files (path, table)
    local dirs = lmkbase.directories (path)
    if dirs then
       for ix, element in ipairs (dirs) do
-         result = result .. add_lmk_files (path .. element .. "/", table)
+         result = result .. add_lmk_files (path .. element .. "/", table, gfiles)
       end
    end
    return result
@@ -407,6 +410,21 @@ function set_global_env (globals)
    for index, value in pairs (gPersistEnv) do gEnv[index] = value end
 end
 
+function add_global_env (globals)
+   if gEnv then merge_tables (gEnv, globals)
+   else gEnv = globals
+   end
+end
+
+function do_external_global_files (list)
+   for _, file in ipairs (list) do
+      if lmkbase.is_valid (file) then
+         result, msg = pcall (dofile, file)
+         if not result then error (msg) end
+      end
+   end
+end
+
 function set_lmkfiles (files, fileCount)
    gFiles = files
    gProcessedFileCount = 0
@@ -428,8 +446,9 @@ function update (path)
    local fileCount = 0
    if result and lmkutil.pushd (gProjectRoot) then
       local files = {}
+      local gfiles = {}
       print ("Updating lmk project.")
-      local searchPath = add_lmk_files (gProjectRoot, files)
+      local searchPath = add_lmk_files (gProjectRoot, files, gfiles)
       if searchPath and searchPath:len () > 0 then set_luapath (searchPath) end
       local info = {}
       local list = {}
@@ -456,8 +475,13 @@ function update (path)
          local out = io.open (outName, "w+")
          if out then
             if searchPath and searchPath:len () > 0 then
-               out:write ('lmk.set_luapath ("' .. searchPath .. '")\n')
+               out:write ('lmk.set_luapath "' .. searchPath .. '"\n\n')
             end
+            out:write ("lmk.do_external_global_files {\n")
+            for _, path in ipairs (gfiles) do
+               out:write ('   "' .. path .. '",\n')
+            end
+            out:write ("}\n\n")
             out:write ("lmk.set_lmkfiles ({\n")
             for index, element in pairs (list) do
                --print (index .. " = " .. element.path .. element.file)
