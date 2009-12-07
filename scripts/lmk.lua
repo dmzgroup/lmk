@@ -405,16 +405,16 @@ end
 
 -- Exported functions
 
-function set_global_env (globals)
-   gEnv = globals
-   for index, value in pairs (gPersistEnv) do gEnv[index] = value end
-end
-
 function add_global_env (globals)
    if gEnv then merge_tables (gEnv, globals)
-   else gEnv = globals
+   else
+      gEnv = globals
+      for index, value in pairs (gPersistEnv) do gEnv[index] = value end
    end
 end
+
+-- This function is left for compatibility with older global.lua files
+set_global_env = add_global_env
 
 function do_external_global_files (list)
    for _, file in ipairs (list) do
@@ -506,22 +506,20 @@ function init (path)
    local result, msg = init_project_path (path)
    if result then
       set_defaults ()
-      local global = gProject .. "/" .. "global.lua"
       local lmkfiles = gProject .. "/" .. gLMKFilesName
+      local global = gProject .. "/" .. "global.lua"
       gEnv = nil
-      if lmkbase.is_valid (global) then
-         result, msg = pcall (dofile, global)
-         if not gEnv then set_global_env ({}) end
-      else set_global_env ({})
-      end
-      if not gEnv.lmk then gEnv.lmk = {} end
-      gEnv.lmk.projectRoot = gProjectRoot 
-      if result and
-            (not lmkbase.is_valid (lmkfiles) or
-               not pcall (dofile, lmkfiles)) then
+      if (not lmkbase.is_valid (lmkfiles) or not pcall (dofile, lmkfiles)) then
          result, msg = update ()
          if result then result, msg = pcall (dofile, lmkfiles) end
       end
+      if result and lmkbase.is_valid (global) then
+         result, msg = pcall (dofile, global)
+         if not gEnv then add_global_env ({}) end
+      end
+      if not gEnv then add_global_env ({}) end
+      if not gEnv.lmk then gEnv.lmk = {} end
+      gEnv.lmk.projectRoot = gProjectRoot
    end
    return result, msg
 end
@@ -679,8 +677,8 @@ end
 
 resolve = function (str)
    if str then
-if type (str) == "table" then lmkutil.dump_table ("unknown", str) end
-assert (type (str) == "string", "str is not a string: " .. type (str))
+      if type (str) == "table" then lmkutil.dump_table ("unknown", str) end
+      assert (type (str) == "string", "str is not a string: " .. type (str))
       str = str:gsub ("%$(%b())", sub_var)
    end
    return str
