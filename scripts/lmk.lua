@@ -414,7 +414,13 @@ function add_global_env (globals)
 end
 
 -- This function is left for compatibility with older global.lua files
-set_global_env = add_global_env
+function set_global_env  (global)
+   print (ConsoleRed ..
+      "Warning: The lmk.set_global.env function has been deprecated.\n" ..
+      "Warning: Please update your lmkproject/global.lua to use lmk.add_global_env." ..
+      ConsoleDefault)
+   add_global_env (global)
+end
 
 function do_external_global_files (list)
    for _, file in ipairs (list) do
