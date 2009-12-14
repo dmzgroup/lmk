@@ -3,6 +3,7 @@ require "lmkutil"
 
 local files = lmkbase.files (".")
 
+local PreOldPath = "/usr/local/Trolltech/Qt-4.6.0/lib/"
 local OldPath = ".framework/Versions/4/"
 local NewPath = "@executable_path/../Frameworks/Qt/"
 
@@ -13,6 +14,7 @@ local libs = {
    "QtDesignerComponents",
    "QtGui",
    "QtHelp",
+   "QtMultimedia",
    "QtNetwork",
    "QtOpenGL",
    "QtScript",
@@ -28,7 +30,7 @@ local libs = {
 local list = {}
 
 for _, lib in ipairs (libs) do
-   list[#list + 1] = {lib .. OldPath .. lib, NewPath .. lib}
+   list[#list + 1] = {PreOldPath .. lib .. OldPath .. lib, NewPath .. lib}
 end
 
 files = lmkbase.files (".")
