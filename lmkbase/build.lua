@@ -1,4 +1,4 @@
-#!/home/rebarker/lua-5.1.2/src/lua
+#!/Users/barker/3rdparty/lua-5.1.4/src/lua
 
 local info = {}
 
@@ -8,14 +8,12 @@ local cpp = ""
 local link = ""
 
 if arg[1] == "macos" then
-   info.lua_lib = "/Users/barker/devel/src/lua-5.1.1/src"
-   info.lua_inc = "/Users/barker/devel/src/lua-5.1.1/src"
+   info.lua_lib = "/Users/barker/3rdparty/lua-5.1.4/src"
+   info.lua_inc = "/Users/barker/3rdparty/lua-5.1.4/src"
    cpp = nil
    link =
-      'export MACOSX_DEPLOYMENT_TARGET="10.3"; gcc -arch i386 -arch ppc ' ..
-      "-bundle -undefined dynamic_lookup " ..
-      " -I" .. info.lua_inc .. " " ..
-      info.src .. "  -o lmkbase.so"
+      'gcc ' .. "-bundle -undefined dynamic_lookup " ..
+      " -I" .. info.lua_inc .. " " .. info.src .. " -o lmkbase.so"
 elseif arg[1] == "linux" then
    info.lua_lib = "/home/rebarker/lua-5.1.2/src"
    info.lua_inc = "/home/rebarker/lua-5.1.2/src"

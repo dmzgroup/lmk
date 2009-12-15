@@ -68,24 +68,27 @@ end
 
 function raw_rm (path)
    local result = true
+   local msg = ""
    if lmkbase.is_dir (path) then
       local dirs = lmkbase.directories (path)
       for ix = 1, #dirs do
          local rmPath = clean_path (path .. "/" .. dirs[ix])
-         if rmPath then result = raw_rm (rmPath)
-         else result = false; break
+         if rmPath then result, msg = raw_rm (rmPath)
+         else result = false; msg = "Invalid path: " .. path .. "/" .. dirs[ix] break
          end
       end
-      local files = lmkbase.files (path)
-      for ix = 1, #files do
-         local rmFile = clean_path (path .. "/" .. files[ix])
-         if rmFile then result = lmkbase.rm (rmFile)
-         else result = false; break
+      if result then
+         local files = lmkbase.files (path)
+         for ix = 1, #files do
+            local rmFile = clean_path (path .. "/" .. files[ix])
+            if rmFile then result, msg = lmkbase.rm (rmFile)
+            else result = false; msg = "Invalid path: " .. path .. "/" .. files[ix] break
+            end
          end
       end
    end
-   result = lmkbase.rm (path)
-   return result
+   if result then result, msg = lmkbase.rm (path) end
+   return result, msg
 end
 
 function raw_mkdir (path)

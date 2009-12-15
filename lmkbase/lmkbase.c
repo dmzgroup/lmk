@@ -276,7 +276,7 @@ static int lmk_rm (lua_State *L) {
 #else /* POSIX */
    struct stat s;
 
-   if (!stat (path, &s)) {
+   if (!lstat (path, &s)) {
 
       /* make sure we can remove the item */
       if (!s.st_mode & S_IWUSR) {

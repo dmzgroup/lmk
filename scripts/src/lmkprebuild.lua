@@ -6,6 +6,7 @@ local rmdir = lmkbuild.rm
 local resolve = lmkbuild.resolve
 local set = lmkbuild.set_global
 local system = lmkbuild.system
+local print = print
 
 module (...)
 
@@ -43,7 +44,9 @@ end
 
 function distclean () 
    rmdir ("$(lmk.projectRoot)tmp/")
-   rmdir ("$(lmk.projectRoot)bin/")
+local result, msg =   rmdir ("$(lmk.projectRoot)bin/")
+if not result then print (msg) end
+print ("Hello")
    rmdir ("$(lmk.projectRoot)lib/")
    rmdir ("$(lmk.projectRoot)include/")
 end
