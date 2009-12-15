@@ -38,6 +38,18 @@ module (...)
 
 local data = {}
 
+local function force_copy (src, target)
+   src = resolve (src)
+   target = resolve (target)
+   if is_valid (src) then
+      if is_dir (target) then
+         local path, file = split (src)
+         target = target .. "/" .. file
+      end
+      cp (src, target)
+   end
+end
+
 local function local_copy (src, target, cpfunc)
    if not cpfunc then cpfunc = cp end
    local isNewer = false
@@ -179,6 +191,13 @@ function add_config (files)
    end
 end
 
+function copy_config (files)
+   local list = expand_file_list (files)
+   if data.copyConfig then append_table (data.copyConfig, list)
+   else data.copyConfig = list
+   end
+end
+
 function add_assets (files)
    local list = expand_file_list (files)
    if data.data then append_table (data.data, list)
@@ -251,6 +270,12 @@ local function main_mac (files)
    if data.config then
       for index, item in ipairs (data.config) do
          local_copy (item, configTarget)
+      end
+   end
+
+   if data.copyConfig then
+      for index, item in ipairs (data.copyConfig) do
+         force_copy (item, configTarget)
       end
    end
 
