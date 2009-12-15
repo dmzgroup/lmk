@@ -44,9 +44,7 @@ end
 
 function distclean () 
    rmdir ("$(lmk.projectRoot)tmp/")
-local result, msg =   rmdir ("$(lmk.projectRoot)bin/")
-if not result then print (msg) end
-print ("Hello")
+   rmdir ("$(lmk.projectRoot)bin/")
    rmdir ("$(lmk.projectRoot)lib/")
    rmdir ("$(lmk.projectRoot)include/")
 end
