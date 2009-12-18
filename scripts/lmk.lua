@@ -392,6 +392,7 @@ build_depends = function (depends)
             else
                result, msg = exec_lmk_file (data.path, data.file)
                if not data.status then data.status = gBuilt end
+               if not result then break end
             end
          else
             result = false
@@ -635,7 +636,6 @@ function build (path)
             (path and path or gProjectRoot)
       end
    end
-   --lmkutil.dump_table ("gEnv", gEnv)
    return result, msg
 end
 
