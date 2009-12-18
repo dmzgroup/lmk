@@ -576,9 +576,11 @@ local function build_dir (path, recurse)
                local dir, file, ext = lmkutil.raw_split (element)
                if ext == "lmk" then
                   result, msg = exec_lmk_file (path, file .. "." .. ext)
+                  if not result then break end
                else
                   result = false
                   msg = "File: " .. path .. "/" .. element .. " is not an lmk file"
+                  break
                end
             end
          end
