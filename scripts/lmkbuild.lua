@@ -158,8 +158,10 @@ function file_newer (src, target)
             result = lmkbase.file_newer (file, target)
             if result then break end
          else
+            result = true
             print ("Warning: source file: " .. file ..
                " does not exist for target file: " .. target)
+            break
          end
       end
    else result = true
