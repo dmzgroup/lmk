@@ -12,9 +12,9 @@
 #include "lualib.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #ifdef _WIN32
-#include <string.h>
 static char lbuffer[510];
 
 static char *local_append (const char *src, const char *data) {
@@ -224,6 +224,33 @@ static int lmk_directories (lua_State *L) {
                count++;
             }
          }
+         else if (c->d_type == DT_LNK) {
+
+            struct stat s;
+
+            luaL_Buffer buf;
+            luaL_buffinit (L, &buf);
+            luaL_addstring (&buf, path);
+            size_t len = strlen (path);
+            if ((len > 0) && (path[len - 1] != '/')) { luaL_addstring (&buf, "/"); }
+            luaL_addstring (&buf, c->d_name);
+            luaL_pushresult (&buf);
+
+            const char *fpath = lua_tostring (L, -1);
+
+            if (fpath && !stat (fpath, &s)) {
+
+               lua_pop (L, 1);
+
+               if (S_ISDIR (s.st_mode)) {
+
+                  lua_pushstring (L, c->d_name);
+                  lua_rawseti (L, -2, count);
+                  count++;
+               }
+            }
+            else { lua_pop (L, 1); }
+         }
 
          c = readdir (d);
       }
@@ -284,12 +311,6 @@ static int lmk_rm (lua_State *L) {
          chmod (path, s.st_mode | S_IWUSR);
       }
 
-/*
-      if (S_ISDIR (s.st_mode)) {
-
-         rmdir (path);
-      }
-*/
       if (!remove (path)) { lua_pushboolean (L, 1); }
       else {
 
@@ -398,7 +419,7 @@ static int lmk_is_valid (lua_State *L) {
 #else /* POSIX */
    struct stat s;
 
-   if (!stat (path, &s)) { lua_pushboolean (L, 1); }
+   if (!lstat (path, &s)) { lua_pushboolean (L, 1); }
 #endif
    else {
 

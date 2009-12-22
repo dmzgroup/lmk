@@ -43,6 +43,7 @@ if [ "$LMK_HOME" = "" ] ; then
 fi
 
 echo "Starting in: $START_DIR"
+echo "LMK Home: $LMK_HOME"
 echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 cd $START_DIR
 
