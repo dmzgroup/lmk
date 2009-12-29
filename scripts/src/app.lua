@@ -30,7 +30,7 @@ local xmlParser = xmlParser
 if system ~= "win32" then
 ln = function (src, target)
    local absSrc = abs_path (resolve (src))
-   exec ("ln -s " .. absSrc .. " " .. target)
+   exec ("ln -f -s " .. absSrc .. " " .. target)
 end
 end
 
