@@ -678,6 +678,7 @@ local function sub_var (str)
          end
       end
    elseif dt == "string" and (result ~= "") then result = resolve (data)
+   elseif dt == "boolean" then result = tostring (data)
    else result = ""
    end
    return result
