@@ -122,8 +122,8 @@ function cp (fileList, target)
          file = lmkutil.clean_path (lmk.resolve (file))
          if lmkbase.is_valid (file) then
             local path = nil
-            path, file = split_path_and_file (file)
-            if not copy_file (file, target .. "/" .. file) then
+            path, fileName = split_path_and_file (file)
+            if not copy_file (file, target .. "/" .. fileName) then
                result = false
             end
          end
@@ -149,6 +149,7 @@ end
 
 function file_newer (src, target)
    local result, msg = false, nil
+   target = lmkutil.clean_path (lmk.resolve (target))
    if type (src) ~= "table" then src = { src } end
    target = lmkutil.clean_path (lmk.resolve (target))
    if lmkbase.is_valid (target) then
