@@ -3,7 +3,7 @@ require "lmkutil"
 
 local files = lmkbase.files (".")
 
-local PreOldPath = "/usr/local/Trolltech/Qt-4.6.0/lib/"
+local PreOldPath = "" -- "/usr/local/Trolltech/Qt-4.6.0/lib/"
 local OldPath = ".framework/Versions/4/"
 local NewPath = "@executable_path/../Frameworks/Qt/"
 
