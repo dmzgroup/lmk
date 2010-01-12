@@ -25,5 +25,5 @@ fi
 
 echo $LMK_LUA $LMK_HOME/scripts/qthcp.lua $* ;
 "$LMK_LUA" $LMK_HOME/scripts/qthcp.lua $* ;
-find . -name $1/\* | xargs grep [.][.][/][.][.] | grep -v pri | grep include
+find $1 -name \* | xargs grep [.][.][/][.][.] | grep -v pri | grep include
 

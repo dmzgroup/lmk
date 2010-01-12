@@ -31,7 +31,7 @@ local function process (target, source)
                         copy (source .. "/" .. realFile, target, f)
                      else print ("File not valid: " .. source .. "/" .. realFile)
                      end
-                  else print ("No match: " .. line)
+--                  else print ("No match: " .. line)
                   end
                end
                header:close ()
