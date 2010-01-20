@@ -43,8 +43,8 @@ if sys == "win32" then
       "$(lmk.globalDefines)",
       "/c /Fo$(objectTarget)",
    })
-   local cflagsOpt = "/nologo /EHsc /MD /Ox /GR /W3"
-   local cflagsDebug = "/nologo /EHsc /MDd /GR /W3 /Z7 /RTC1"
+   local cflagsOpt = "/nologo /EHsc /MD /Ox /GR /W3" -- /WX
+   local cflagsDebug = "/nologo /EHsc /MDd /GR /W3 /Z7 /RTC1" -- /WX
    gset ("lmk.objExt", ".obj")
    gset ("lmk.includePathFlag", "/I")
    gset ("lmk.defineFlag", "/D")
