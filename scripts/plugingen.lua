@@ -727,7 +727,24 @@ dmz::$(NAME)::close_event (
 }
 ]]
 
+local function print_usage ()
+
+   print ("\nplugingen usage: ")
+   print ("   plugingen PluginName options")
+   print ("\noptions:")
+   print ("   -e (EventObserverUtil) : Defines an interface for event observing.")
+   print ("   -i (InputObserverUtil) : Defines an interface for receiving input events.")
+   print ("   -m (Messaging) : Defines an interface for receiving messages.")
+   print ("   -o (ObjectObserverUtil) : Defines an interface for object observing.")
+   print ("   -t (TimeSlice) : Defines an interface for receiving time slices.")
+   print ("   -h or --help : This help list.")
+   print ("\nexample:")
+   print ("   plugingen PluginFoo -t -m -o # Create a plugin called dmz::PluginFoo")
+   os.exit (1)
+end
+
 local name = arg[1]
+if name == "-h" or name == "--help" then print_usage () end
 local list = nil
 for ix = 2, #arg do
    if not list then list = {} end
@@ -784,7 +801,8 @@ print (lmkName .. " " .. headerName .. " " .. cppName .. " "  .. defTag)
    }
    if list then
       for ix = 1, #list do
-         if list[ix].opt== "-t" then
+         if list[ix].opt == "-h" or list[ix].opt == "--help" then print_usage ()
+         elseif list[ix].opt== "-t" then
             vars.SYNC_INCLUDES = "\n#include <dmzRuntimeTimeSlice.h>"
             vars.SYNC_PUBLIC = ",\n         public TimeSlice"
             vars.SYNC_CONSTRUCTOR = ',\n      TimeSlice (Info)'
