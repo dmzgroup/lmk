@@ -873,4 +873,5 @@ print ("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
    if fout then fout:write (cppfile); io.close (fout) end
    fout = io.open (lmkName, "w")
    if fout then fout:write (lmkfile); io.close (fout) end
+else print_usage ()
 end
