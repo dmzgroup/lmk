@@ -313,6 +313,8 @@ local function process_info (info)
    return result, msg
 end
 
+local lastNameSize = 0
+
 local function print_unit (name)
    gProcessedFileCount = gProcessedFileCount + 1
    local value = math.floor (gProcessedFileCount / gFileCount * 100)
@@ -324,6 +326,7 @@ local function print_unit (name)
          value .. "%" .. ConsoleDefault ..  "]: " .. name .. " " ..
          gProcessedFileCount .. "/" .. gFileCount)
    else
+      local space = string.rep (" ", math.max (0, lastNameSize - name:len ()))
       io.write (
          " [",
          ConsoleRed,
@@ -332,8 +335,9 @@ local function print_unit (name)
          ConsoleDefault,
          "] ",
          name,
-         "                               \r")
+         space .. "\r")
       io.flush ()
+      lastNameSize =  name:len ()
    end
 end
 
