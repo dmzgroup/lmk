@@ -1,4 +1,4 @@
-#ifdef _WIN32
+#if defined (_WIN32)
 #include <windows.h>
 #else /* POSIX */
 #include <dirent.h>
@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef _WIN32
+#if defined (_WIN32)
 static char lbuffer[510];
 
 static char *local_append (const char *src, const char *data) {
@@ -22,7 +22,80 @@ static char *local_append (const char *src, const char *data) {
    sprintf ((char *)lbuffer, "%s%s", src, data);
    return (char *)lbuffer;
 }
+
+static CONSOLE_SCREEN_BUFFER_INFO defaultInfo;
+static HANDLE out;
+
+
+static void
+init_console () {
+
+   out = GetStdHandle (STD_ERROR_HANDLE);
+   GetConsoleScreenBufferInfo (out, &defaultInfo);
+}
 #endif
+
+
+static int lmk_console_red (lua_State *L) {
+
+#if defined (_WIN32)
+   SetConsoleTextAttribute (out, FOREGROUND_RED | FOREGROUND_INTENSITY);
+#else
+   fprintf (stderr, "\033[0;31m");
+#endif
+
+   return 0;
+}
+
+
+static int lmk_console_green (lua_State *L) {
+
+#if defined (_WIN32)
+   SetConsoleTextAttribute (out, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+#else
+    fprintf (stderr, "\033[0;32m");
+#endif
+
+   return 0;
+}
+
+
+static int lmk_console_yellow (lua_State *L) {
+
+#if defined (_WIN32)
+   SetConsoleTextAttribute (
+      out,
+      FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+#else
+   fprintf (stderr, "\033[0;33m");
+#endif
+
+   return 0;
+}
+
+
+static int lmk_console_blue (lua_State *L) {
+
+#if defined (_WIN32)
+   SetConsoleTextAttribute (out, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+#else
+   fprintf (stderr, "\033[0;34m");
+#endif
+
+   return 0;
+}
+
+
+static int lmk_console_default (lua_State *L) {
+
+#if defined (_WIN32)
+   SetConsoleTextAttribute (out, defaultInfo.wAttributes);
+#else
+   fprintf (stderr, "\033[0m");
+#endif
+
+   return 0;
+}
 
 static int lmk_system (lua_State *L) {
 
@@ -48,7 +121,7 @@ static int lmk_pwd (lua_State *L) {
 
    int result = 1;
 
-#ifdef _WIN32
+#if defined (_WIN32)
    DWORD size = GetCurrentDirectory (0, 0);
    char *ptr = (char *)malloc ((size + 1) * sizeof (char));
    if (ptr && GetCurrentDirectory (size + 1, ptr)) { lua_pushstring (L, ptr); }
@@ -62,7 +135,7 @@ static int lmk_pwd (lua_State *L) {
       lua_pushstring (L, "failed getting cwd");
       result = 2;
    }
-#ifdef _WIN32
+#if defined (_WIN32)
    if (ptr) { free (ptr); ptr = 0; }
 #endif
 
@@ -75,7 +148,7 @@ static int lmk_cd (lua_State *L) {
    int result = 1;
    const char *path = luaL_checkstring (L, 1);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    if (SetCurrentDirectory (path)) { lua_pushboolean (L, 1); }
 #else /* POSIX */
    if (!chdir (path)) { lua_pushboolean (L, 1); }
@@ -96,7 +169,7 @@ static int lmk_files (lua_State *L) {
    int result = 1;
    const char *path = luaL_checkstring (L, 1);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    WIN32_FIND_DATA data;
    HANDLE h = FindFirstFile (local_append (path, "/*"), &data);
    int count = 1;
@@ -157,7 +230,7 @@ static int lmk_directories (lua_State *L) {
    int result = 1;
    const char *path = luaL_checkstring (L, 1);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    WIN32_FIND_DATA data;
    HANDLE h = FindFirstFile (local_append (path, "/*"), &data);
    int error = 0;
@@ -274,7 +347,7 @@ static int lmk_rm (lua_State *L) {
    int result = 1;
    const char *path = luaL_checkstring (L, 1);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    WIN32_FILE_ATTRIBUTE_DATA data;
    memset ((void *) &data, '\0', sizeof (WIN32_FILE_ATTRIBUTE_DATA));
 
@@ -342,7 +415,7 @@ static int lmk_mkdir (lua_State *L) {
    int result = 1;
    const char *path = luaL_checkstring (L, 1);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    if (CreateDirectory (path, 0)) { lua_pushboolean (L, 1); }
 #else /* POSIX */
    if (!mkdir (path, S_IRUSR | S_IWUSR | S_IXUSR)) { lua_pushboolean (L, 1); }
@@ -364,7 +437,7 @@ static int lmk_file_newer (lua_State *L) {
    const char *file1 = luaL_checkstring (L, 1);
    const char *file2 = luaL_checkstring (L, 2);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    WIN32_FILE_ATTRIBUTE_DATA data1;
    WIN32_FILE_ATTRIBUTE_DATA data2;
    memset ((void *) &data1, '\0', sizeof (WIN32_FILE_ATTRIBUTE_DATA));
@@ -408,7 +481,7 @@ static int lmk_is_valid (lua_State *L) {
    int result = 1;
    const char *path = luaL_checkstring (L, 1);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    WIN32_FILE_ATTRIBUTE_DATA data;
    memset ((void *) &data, '\0', sizeof (WIN32_FILE_ATTRIBUTE_DATA));
 
@@ -437,7 +510,7 @@ static int lmk_is_dir (lua_State *L) {
    int result = 1;
    const char *path = luaL_checkstring (L, 1);
 
-#ifdef _WIN32
+#if defined (_WIN32)
    WIN32_FILE_ATTRIBUTE_DATA data;
    memset ((void *) &data, '\0', sizeof (WIN32_FILE_ATTRIBUTE_DATA));
 
@@ -467,6 +540,12 @@ static int lmk_is_dir (lua_State *L) {
 
 
 static const struct luaL_reg lmkbaselib[] = {
+   {"console_red", lmk_console_red},
+   {"console_green", lmk_console_green},
+   {"console_yellow", lmk_console_yellow},
+   {"console_blue", lmk_console_blue},
+   {"console_default", lmk_console_default},
+   {"red", lmk_console_red},
    {"system", lmk_system},
    {"pwd", lmk_pwd},
    {"cd", lmk_cd},
@@ -480,11 +559,14 @@ static const struct luaL_reg lmkbaselib[] = {
    {NULL, NULL},
 };
 
-#ifdef _WIN32
+#if defined (_WIN32)
 __declspec (dllexport)
 #endif
 int luaopen_lmkbase (lua_State *L) {
 
+#if defined (_WIN32)
+   init_console ();
+#endif
    luaL_openlib (L, "lmkbase", lmkbaselib, 0);
  
    return 1;

@@ -25,13 +25,13 @@ local package = package
 module (...)
 
 -- globals
-IsVerbose = (lmkbase.system () == "win32" and true or false)
+IsVerbose = false
 
-ConsoleRed = ""
-ConsoleGreen = ""
-ConsoleYellow = ""
-ConsoleBlue = ""
-ConsoleDefault = ""
+console_default = lmkbase.console_default
+console_red = lmkbase.console_red
+console_green = lmkbase.console_green 
+console_yellow = lmkbase.console_yellow
+console_blue = lmkbase.console_blue
 
 -- local globals
 local gProjectName = "lmkproject"
@@ -50,25 +50,32 @@ local gInProgress = 1
 local gBuilt = 2
 local gProcessFuncName = "main"
 local gRecurse = false
+local gEol = (lmkbase.system () == "win32" and "\n" or "\r")
+
 
 -- exported functions used in lmk files
-function error (msg) lua_error (ConsoleRed .. msg .. ConsoleDefault) end
+function error (msg)
+   console_red ()
+   print (msg)
+   console_default ()
+   lua_error ("Error detected")
+end
 
 function set_verbose_mode (mode) IsVerbose = mode end
 
 function set_color_mode (mode)
    if mode then
-      ConsoleRed = "\027[0;31m"
-      ConsoleGreen = "\027[0;1;32m"
-      ConsoleYellow = "\027[0;1;33m"
-      ConsoleBlue = "\027[0;1;34m"
-      ConsoleDefault = "\027[0m"
+      console_default = lmkbase.console_default
+      console_red = lmkbase.console_red
+      console_green = lmkbase.console_green 
+      console_yellow = lmkbase.console_yellow
+      console_blue = lmkbase.console_blue
    else
-      ConsoleRed = ""
-      ConsoleGreen = ""
-      ConsoleYellow = ""
-      ConsoleBlue = ""
-      ConsoleDefault = ""
+      console_default = function () end
+      console_red = console_default
+      console_green = console_default 
+      console_yellow = console_default
+      console_blue = console_default
    end
 end
 
@@ -158,8 +165,9 @@ local function add_files_to_info (info, files, src)
       else append_table (info.src[src].files, files)
       end
    else
-      print (ConsoleRed .. "Error: Unable to detect type of file: " .. files[1] ..
-         ConsoleDefault)
+      console_red ()
+      print ("Error: Unable to detect type of file: " .. files[1])
+      console_default ()
    end
 end
 
@@ -322,20 +330,21 @@ local function print_unit (name)
    elseif value < 100 then value = " " .. value
    end
    if IsVerbose then
-      print (ConsoleYellow .. "Processing" .. ConsoleDefault .. "[" .. ConsoleRed ..
-         value .. "%" .. ConsoleDefault ..  "]: " .. name .. " " ..
-         gProcessedFileCount .. "/" .. gFileCount)
+      console_yellow ()
+      io.write ("Processing")
+      console_default ()
+      io.write ("[")
+      console_red ()
+      io.write (value .. "%")
+      console_default ()
+      print ("]: " .. name .. " " .. gProcessedFileCount .. "/" .. gFileCount)
    else
       local space = string.rep (" ", math.max (0, lastNameSize - name:len ()))
-      io.write (
-         " [",
-         ConsoleRed,
-         value,
-         "%",
-         ConsoleDefault,
-         "] ",
-         name,
-         space .. "\r")
+      io.write (" [")
+      console_red ()
+      io.write (value .. "%")
+      console_default ()
+      io.write ("] ", name, space .. gEol)
       io.flush ()
       lastNameSize =  name:len ()
    end
@@ -420,10 +429,11 @@ end
 
 -- This function is left for compatibility with older global.lua files
 function set_global_env  (global)
-   print (ConsoleRed ..
+   console_red ()
+   print (
       "Warning: The lmk.set_global_env function has been deprecated.\n" ..
-      "Warning: Please update your lmkproject/global.lua to use lmk.add_global_env." ..
-      ConsoleDefault)
+      "Warning: Please update your lmkproject/global.lua to use lmk.add_global_env.")
+   console_default ()
    add_global_env (global)
 end
 

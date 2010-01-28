@@ -23,8 +23,8 @@ elseif arg[1] == "linux" then
       " -I" .. info.lua_inc .. " " ..
       info.src .. "  -o lmkbase.so"
 elseif arg[1] == "win32" then
-   info.lua_lib = 'c:/cygwin/home/"Randall Barker"/lua-5.1.1/src'
-   info.lua_inc = 'c:/cygwin/home/"Randall Barker"/lua-5.1.1/src'
+   info.lua_lib = 'c:/cygwin/home/barker/lua-5.1.4/src'
+   info.lua_inc = 'c:/cygwin/home/barker/lua-5.1.4/src'
    cpp = "cl /nologo /O2 /W3 /c /D_CRT_SECURE_NO_DEPRECATE /I" .. info.lua_inc .. " " .. info.src
    link = "link /nologo /DLL /LIBPATH:" .. info.lua_lib .. " lua51.lib lmkbase.obj /out:lmkbase.dll"
 else

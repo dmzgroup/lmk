@@ -29,11 +29,15 @@ directories = lmkbase.directories
 files = lmkbase.files
 
 function print_success (msg)
-   print (lmk.ConsoleGreen .. msg .. lmk.ConsoleDefault)
+   lmk.console_green ()
+   print (msg)
+   lmk.console_default ()
 end
 
 function print_fail (msg)
-   print (lmk.ConsoleRed .. msg .. lmk.ConsoleDefault)
+   lmk.console_red ()
+   print (msg)
+   lmk.console_default ()
 end
 
 function verbose () return lmk.IsVerbose end
