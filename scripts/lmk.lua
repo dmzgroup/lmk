@@ -58,7 +58,7 @@ function error (msg)
    console_red ()
    print (msg)
    console_default ()
-   lua_error ("Error detected")
+   lua_error (msg)
 end
 
 function set_verbose_mode (mode) IsVerbose = mode end
@@ -331,20 +331,20 @@ local function print_unit (name)
    end
    if IsVerbose then
       console_yellow ()
-      io.write ("Processing")
+      io.stderr:write ("Processing")
       console_default ()
-      io.write ("[")
+      io.stderr:write ("[")
       console_red ()
-      io.write (value .. "%")
+      io.stderr:write (value .. "%")
       console_default ()
       print ("]: " .. name .. " " .. gProcessedFileCount .. "/" .. gFileCount)
    else
       local space = string.rep (" ", math.max (0, lastNameSize - name:len ()))
-      io.write (" [")
+      io.stderr:write (" [")
       console_red ()
-      io.write (value .. "%")
+      io.stderr:write (value .. "%")
       console_default ()
-      io.write ("] ", name, space .. gEol)
+      io.stderr:write ("] ", name, space .. gEol)
       io.flush ()
       lastNameSize =  name:len ()
    end
