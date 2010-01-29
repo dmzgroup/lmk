@@ -42,6 +42,7 @@ static int lmk_console_red (lua_State *L) {
    SetConsoleTextAttribute (out, FOREGROUND_RED | FOREGROUND_INTENSITY);
 #else
    fprintf (stderr, "\033[0;31m");
+   fprintf (stdout, "\033[0;31m");
 #endif
 
    return 0;
@@ -54,6 +55,7 @@ static int lmk_console_green (lua_State *L) {
    SetConsoleTextAttribute (out, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 #else
     fprintf (stderr, "\033[0;32m");
+    fprintf (stdout, "\033[0;32m");
 #endif
 
    return 0;
@@ -68,6 +70,7 @@ static int lmk_console_yellow (lua_State *L) {
       FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 #else
    fprintf (stderr, "\033[0;33m");
+   fprintf (stdout, "\033[0;33m");
 #endif
 
    return 0;
@@ -80,6 +83,7 @@ static int lmk_console_blue (lua_State *L) {
    SetConsoleTextAttribute (out, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 #else
    fprintf (stderr, "\033[0;34m");
+   fprintf (stdout, "\033[0;34m");
 #endif
 
    return 0;
@@ -92,6 +96,7 @@ static int lmk_console_default (lua_State *L) {
    SetConsoleTextAttribute (out, defaultInfo.wAttributes);
 #else
    fprintf (stderr, "\033[0m");
+   fprintf (stdout, "\033[0m");
 #endif
 
    return 0;

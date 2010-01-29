@@ -15,8 +15,8 @@ if arg[1] == "macos" then
       'gcc ' .. "-bundle -undefined dynamic_lookup " ..
       " -I" .. info.lua_inc .. " " .. info.src .. " -o lmkbase.so"
 elseif arg[1] == "linux" then
-   info.lua_lib = "/home/rebarker/lua-5.1.2/src"
-   info.lua_inc = "/home/rebarker/lua-5.1.2/src"
+   info.lua_lib = "/home/barker/lua-5.1.4/src"
+   info.lua_inc = "/home/barker/lua-5.1.4/src"
    cpp = nil
    link =
       "gcc -shared "  ..
