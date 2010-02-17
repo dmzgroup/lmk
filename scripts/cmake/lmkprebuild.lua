@@ -14,11 +14,7 @@ local function env_var_setup ()
    set ("lmk.cmakeDir", "$(lmk.projectRoot)cmake/")
    set ("lmk.tmpDir", "$(lmk.projectRoot)tmp/")
    set ("lmk.binDir", "$(lmk.projectRoot)bin/")
-   if system == "win32" then
-      set ("lmk.libDir", "$(lmk.projectRoot)lib/")
-   else
-      set ("lmk.libDir", "$(lmk.binDir)")
-   end
+   set ("lmk.libDir", "$(lmk.binDir)")
    set ("lmk.includeDir", "$(lmk.projectRoot)include/")
 end
 

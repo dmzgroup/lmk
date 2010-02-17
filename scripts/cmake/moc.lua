@@ -15,11 +15,31 @@ local rm = lmkbuild.rm
 local set = lmkbuild.set_local
 local split = lmkbuild.split
 
+gset ("lmk.mocExec", {
+   "$(DMZ_QT_HOME)/moc $(mocSource) -i -f$(mocSource) -o$(mocTarget)",
+})
 
 module (...)
 
-function main (files)
+function main (files, moconly)
    append ("localIncludes", "$(lmk.includePathFlag).")
+   local mocList = {}
+   local execList = {}
+   for index, item in ipairs (files) do
+      local path, file, ext = split (item)
+      local mocTarget = resolve ("$(localTmpDir)moc_".. file .. ".cpp")
+      mocList[#mocList + 1] = mocTarget
+      set ("mocTarget", mocTarget)
+      local build = false
+      if file_newer (item, mocTarget) then build = true
+      end
+      if build then
+         set ("mocSource", item)
+         execList[#execList + 1] = resolve ("$(lmk.mocExec)")
+      end
+   end
+   exec (execList)
+   if not moconly then add_files (mocList, "cpp") end
 end
 
 function test (files)
@@ -27,6 +47,14 @@ function test (files)
 end
 
 function clean (files, moconly)
+   local mocList = {}
+   for index, item in ipairs (files) do
+      local path, file, ext = split (item)
+      local mocTarget = resolve ("$(localTmpDir)moc_".. file .. ".cpp")
+      mocList[#mocList + 1] = resolve ("moc_" .. file .. ".cpp")
+      if mocTarget and is_valid (mocTarget) then rm (mocTarget) end
+   end
+   if not moconly then add_files (mocList, "cpp") end
 end
 
 function clobber (files)

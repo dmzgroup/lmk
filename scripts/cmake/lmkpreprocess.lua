@@ -8,7 +8,7 @@ local resolve = lmkbuild.resolve
 module (...)
 
 function main ()
-   set ("localCMakeDir", "$(lmk.cmakeDir)$(name)/")
+   set ("localCMakeDir", "$(lmk.cmakeDir)targets/$(name)/")
    set ("localTmpDir", "$(lmk.tmpDir)$(name)/")
    mkdir ("$(localCMakeDir)")
    mkdir ("$(localTmpDir)")

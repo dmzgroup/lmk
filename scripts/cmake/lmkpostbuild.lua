@@ -17,7 +17,7 @@ function main ()
       local list = get_var ("lmk.nameList")
       if list then
          for _, name in pairs (list) do
-            file:write ("add_subdirectory(./" .. name .. ")\n")
+            file:write ("add_subdirectory(./targets/" .. name .. ")\n")
          end
       end
       file:close ()
