@@ -29,7 +29,7 @@ function main ()
             file:write ("include_directories(BEFORE\n") 
             for _, val in ipairs (includes) do
                local path = abs_path (resolve (val))
-               if path then file:write (abs_path (resolve (val)) .. "\n") end
+               if path then file:write (path .. "\n") end
             end
             file:write (")\n")
          end
@@ -65,9 +65,9 @@ function main ()
          end
          libs = get_var ("localLibPaths")
          if libs then
-            file:write (resolve ("target_link_libraries($(name)\n"))
+            file:write (resolve ("set_target_properties($(name)\n"))
             for _, val in ipairs (libs) do
-               file:write ('"' .. resolve (val) ..  '"' .. "\n")
+               file:write ('PROPERTIES LINK_FLAGS "' .. resolve (val) ..  '"' .. "\n")
             end
             file:write (")\n")
          end

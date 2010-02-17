@@ -142,6 +142,8 @@ function raw_abs_path (path)
       if result and file then
          result = clean_path (result .. "/" .. file ..
             (ext and ("." .. ext) or ""))
+      elseif result then
+         result = clean_path (result .. "/")
       end
    end
    return result
