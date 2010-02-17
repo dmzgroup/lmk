@@ -1,0 +1,74 @@
+#!/bin/sh
+
+START_DIR=`pwd`
+
+while [ "`pwd`" != "/" -a "$SRC_LOCATION" = "" ] ; do
+
+    if [ -d ./lmkproject -a -d ./src ] ; then
+
+       SRC_LOCATION=`pwd`/src
+
+    else
+
+       cd ..
+
+    fi
+
+done
+
+if [ "$SRC_LOCATION" = "" -a -d "$HOME/cm/" ] ; then
+   START_DIR="$HOME/cm/"
+fi
+
+if [ "$LMK_HOME" = "" ] ; then
+
+   if [ "$SRC_LOCATION" = "" ] ; then
+
+      if [ -d "$HOME/cm/src/lmk" ] ; then
+
+         LMK_HOME=$HOME/cm/src/lmk
+
+      else
+
+         echo "Unable to locate lmk. Please set the LMK_HOME environment variable if lmk is not installed in a default location."
+
+         exit -1
+
+      fi
+
+   else
+      LMK_HOME=$SRC_LOCATION/lmk
+   fi
+
+fi
+
+echo "Starting in: $START_DIR"
+echo "LMK Home: $LMK_HOME"
+echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+cd $START_DIR
+
+if [ -d $LMK_HOME/bin/`uname` ] ; then
+   export LMK_BIN_HOME=$LMK_HOME/bin/`uname` ;
+   export LUA_CPATH="$LMK_HOME/bin/`uname`/?.so;;"
+elif [ `uname -o` = "Cygwin" ] ; then
+   # NOTE: cygpath converts the path from Unix to Win32 format so that lua.exe can
+   #       understand it.
+   export LMK_HOME=`cygpath -w $LMK_HOME`
+   export LMK_BIN_HOME=$LMK_HOME/bin/win32 ;
+   export LUA_CPATH="$LMK_HOME/bin/win32/?.dll;;"
+fi
+
+export LUA_PATH="$LMK_HOME/scripts/?.lua;$LMK_HOME/scripts/cmake/?.lua;;"
+
+if [ "$LMK_BIN_HOME" = "" ] ; then
+   echo LMK_BIN_HOME not found ;
+   exit -1;
+fi
+
+if [ "$LMK_LUA" = "" ] ; then
+   export LMK_LUA=$LMK_BIN_HOME/lua ;
+fi
+
+#echo $LMK_LUA $LMK_HOME/scripts/lmkapp.lua $* ;
+"$LMK_LUA" $LMK_HOME/scripts/lmkapp.lua $* ;
+
