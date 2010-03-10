@@ -365,6 +365,12 @@ local function main_win32 (files)
       end
    end
 
+   if data.copyConfig then
+      for index, item in ipairs (data.copyConfig) do
+         force_copy (item, configTarget)
+      end
+   end
+
    if data.data then
       for index, item in ipairs (data.data) do
          if not is_valid (item) then
