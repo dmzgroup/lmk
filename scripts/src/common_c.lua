@@ -86,11 +86,11 @@ else -- unix
    gset ("lmk.defineFlag", "-D")
    if sys == "macos" then
       gset ("lmk.cpp", "g++")
-      gset ("lmk.cppFlags.opt", "-O")
-      gset ("lmk.cppFlags.debug", "-g -fPIC")
+      gset ("lmk.cppFlags.opt", "-O -m32")
+      gset ("lmk.cppFlags.debug", "-g -fPIC -m32")
       gset ("lmk.cc", "gcc")
-      gset ("lmk.ccFlags.opt", "-O")
-      gset ("lmk.ccFlags.debug", "-g -fPIC")
+      gset ("lmk.ccFlags.opt", "-O -m32")
+      gset ("lmk.ccFlags.debug", "-g -fPIC -m32")
    elseif sys == "iphone" then
       local iphoneFlags = " -arch armv6 -pipe -Wno-trigraphs " ..
          "-fpascal-strings -fasm-blocks -Wreturn-type -Wunused-variable " ..
