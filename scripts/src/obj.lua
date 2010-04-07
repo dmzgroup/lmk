@@ -69,7 +69,7 @@ else -- unix
    gset ("lmk.shared.ext", ".so")
    gset ("lmk.plugin.ext", ".plugin")
    if sys == "macos" then
-      local linker = "g++ -header_pad_max_install_names"
+      local linker = "g++ -m32 -header_pad_max_install_names"
       local outFlag = "-o "
       gset ("lmk.exe.linker", linker)
       gset ("lmk.shared.linker", linker)
