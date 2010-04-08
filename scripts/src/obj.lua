@@ -70,6 +70,7 @@ else -- unix
    gset ("lmk.plugin.ext", ".plugin")
    if sys == "macos" then
       local linker = "g++ -m32 -header_pad_max_install_names"
+      --if is_valid ("/usr/bin/llvm-g++") then linker = "llvm-" .. linker end
       local outFlag = "-o "
       gset ("lmk.exe.linker", linker)
       gset ("lmk.shared.linker", linker)
@@ -80,17 +81,6 @@ else -- unix
       gset ("lmk.shared.ext", ".dylib")
       gset ("lmk.plugin.linker", linker)
       gset ("lmk.plugin.linkerFlags", "-bundle")
-   elseif sys == "iphone" then
-      local linker = "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/" ..
-         "libtool -static -arch_only armv6 -syslibroot " ..
-         "/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk"
-      local outFlag = "-o "
-      gset ("lmk.exe.linker", linker)
-      gset ("lmk.shared.linker", linker)
-      gset ("lmk.shared.ext", ".a")
-      gset ("lmk.plugin.linker", linker)
-      gset ("lmk.plugin.prefix", "lib")
-      gset ("lmk.plugin.ext", ".a")
    elseif sys == "linux" then
       local linker = "g++"
       local outFlag = "-o "
@@ -139,16 +129,13 @@ function main (files)
          end
          set ("objList", objList)
       end
-      if sys == "iphone" then lset ("localLibs", "")
-      else
-         local libs = get_var ("libs")
-         if libs then
-            local libList = {}
-            for index, item in ipairs (libs) do
-               libList[index] = "$(lmk.libPrefix)" .. item .. "$(lmk.libSuffix)"
-            end
-            append ("localLibs", libList)
+      local libs = get_var ("libs")
+      if libs then
+         local libList = {}
+         for index, item in ipairs (libs) do
+            libList[index] = "$(lmk.libPrefix)" .. item .. "$(lmk.libSuffix)"
          end
+         append ("localLibs", libList)
       end
       exec ("$(lmk.link)")
       if sys == "win32" then
