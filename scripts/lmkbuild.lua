@@ -154,9 +154,8 @@ end
 function file_newer (src, target)
    local result, msg = false, nil
    target = lmkutil.clean_path (lmk.resolve (target))
-   if type (src) ~= "table" then src = { src } end
-   target = lmkutil.clean_path (lmk.resolve (target))
    if lmkbase.is_valid (target) then
+      if type (src) ~= "table" then src = { src } end
       for index, file in ipairs (src) do
          file = lmkutil.clean_path (lmk.resolve (file))
          if lmkbase.is_valid (file) then
