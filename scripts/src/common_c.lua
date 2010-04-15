@@ -88,20 +88,20 @@ else -- unix
       local gPlusPlus = "g++"
       --if is_valid ("/usr/bin/llvm-g++") then gPlusPlus = "llvm-" .. gPlusPlus end
       gset ("lmk.cpp", gPlusPlus)
-      gset ("lmk.cppFlags.opt", "-O -m32")
-      gset ("lmk.cppFlags.debug", "-g -m32")
+      gset ("lmk.cppFlags.opt", "-O3 -m32")
+      gset ("lmk.cppFlags.debug", "-g -O0  -m32")
       local gcc = "gcc"
       --if is_valid ("/usr/bin/llvm-gcc") then gcc = "llvm-" .. gcc end
       gset ("lmk.cc", gcc)
-      gset ("lmk.ccFlags.opt", "-O -m32")
-      gset ("lmk.ccFlags.debug", "-g -m32")
+      gset ("lmk.ccFlags.opt", "-O3 -m32")
+      gset ("lmk.ccFlags.debug", "-g -O0  -m32")
    elseif sys == "linux" then
       gset ("lmk.cpp", "g++")
-      gset ("lmk.cppFlags.opt", "-O")
-      gset ("lmk.cppFlags.debug", "-g")
+      gset ("lmk.cppFlags.opt", "-O3")
+      gset ("lmk.cppFlags.debug", "-g -O0 ")
       gset ("lmk.cc", "gcc")
-      gset ("lmk.ccFlags.opt", "-ansi -O")
-      gset ("lmk.ccFlags.debug", "-ansi -g")
+      gset ("lmk.ccFlags.opt", "-ansi -O3")
+      gset ("lmk.ccFlags.debug", "-ansi -g -O0")
    end
 end
 
