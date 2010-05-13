@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$LMK_HOME" = "" ] ; then
-   export LMK_HOME="/lmk" ;
+   export LMK_HOME="$HOME/cm/src/lmk" ;
    echo 'LMK_HOME not defined. Using:' $LMK_HOME ;
 fi
 
