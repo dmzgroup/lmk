@@ -24,6 +24,7 @@ namespace dmz {
             const Plugin *PluginPtr);
 $(SYNC_INTERFACE)$(MESSAGE_INTERFACE)$(INPUT_INTERFACE)$(OBJECT_INTERFACE)$(EVENT_INTERFACE)
       protected:
+         // $(NAME) Interface
          void _init (Config &local);
 
          Log _log;
@@ -92,6 +93,7 @@ dmz::$(NAME)::discover_plugin (
 }
 $(SYNC_IMPL)$(MESSAGE_IMPL)$(INPUT_IMPL)$(OBJECT_IMPL)$(EVENT_IMPL)
 
+// $(NAME) Interface
 void
 dmz::$(NAME)::_init (Config &local) {
 
@@ -133,7 +135,6 @@ local tscpp = [[
 // TimeSlice Interface
 void
 dmz::$(NAME)::update_time_slice (const Float64 TimeDelta) {
-
 
 }
 ]]
@@ -510,7 +511,6 @@ dmz::$(NAME)::update_link_attribute_object (
       const Handle AttributeObjectHandle,
       const UUID &PrevAttributeIdentity,
       const Handle PrevAttributeObjectHandle) {
-
 
 }
 
