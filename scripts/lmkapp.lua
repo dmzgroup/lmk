@@ -12,6 +12,7 @@ local function print_usage ()
    print ("   -f <function name>")
    print ("   -r <on/off>")
    print ("   -v <on/off>")
+   print ("   -c <on/off>")
 end
 
 local argList = lmkutil.process_args (arg)
@@ -89,6 +90,15 @@ if argList then
             if (value == "true") or (value == "on") or (value == "1") then
                lmk.set_verbose (true)
             else lmk.set_verbose (false)
+            end
+         end
+      elseif opt == "-c" then
+         if not values then lmk.set_color_mode (true)
+         else
+            local value = values[1]:lower ()
+            if (value == "true") or (value == "on") or (value == "1") then
+               lmk.set_color_mode (true)
+            else lmk.set_color_mode (false)
             end
          end
       elseif opt == "-h" then print_usage (); os.exit ()
