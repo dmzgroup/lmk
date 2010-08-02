@@ -23,6 +23,7 @@ local resolve = lmkbuild.resolve
 local rm = lmkbuild.rm
 local set_local = lmkbuild.set_local
 local split = lmkbuild.split_path_and_file
+local get_ext = function (path) local _, _, ext = lmkbuild.split (path); return ext end
 local system = lmkbuild.system ()
 local tostring = tostring
 local xmlParser = xmlParser
@@ -158,7 +159,10 @@ local function expand_file_list (files)
          local newFiles = get_files (value)
          if newFiles then
             for _, file in ipairs (newFiles) do
-               result[#result + 1] = value .. "/" .. file
+               local ext = get_ext (file)
+               if ext ~= "lmk" then
+                  result[#result + 1] = value .. "/" .. file
+               end
             end
          end
          local newDirs = get_dirs (value)
