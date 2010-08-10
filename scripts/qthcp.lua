@@ -29,7 +29,7 @@ local function process (target, source)
                      if lmkbase.is_valid (source .. "/" .. realFile) then
 --print (realFile)
                         copy (source .. "/" .. realFile, target, f)
-                     else print ("File not valid: " .. source .. "/" .. realFile)
+                     else print ("File not valid: " .. source .. "/" .. realFile .. " for  " .. target .. "/" .. f)
                      end
 --                  else print ("No match: " .. line)
                   end
