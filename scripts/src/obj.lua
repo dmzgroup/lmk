@@ -138,7 +138,7 @@ function main (files)
          append ("localLibs", libList)
       end
       exec ("$(lmk.link)")
-      if sys == "win32" then
+      if (sys == "win32") and is_valid (binTarget .. ".manifest") then
          local mt = "mt.exe -nologo -manifest " .. binTarget ..
             ".manifest -outputresource:" .. binTarget .. ";"
          if resolve ("$(type)") == "exe" then mt = mt .. "1" else mt = mt .. "2" end
