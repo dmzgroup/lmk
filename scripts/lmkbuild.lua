@@ -181,12 +181,12 @@ function exec (list)
       if lmk.IsVerbose then
          print (todo)
          local result = os.execute (todo)
-         assert (result == 0, "Build faild in " .. lmkbase.pwd ())
+         assert (result == 0, "Build failed in " .. lmkbase.pwd ())
       else
          local result = os.execute (todo)
          if result ~= 0 then
             print (todo)
-            error ("Build failded in " .. lmkbase.pwd ())
+            error ("Build failed in " .. lmkbase.pwd ())
          end
       end
    end
