@@ -50,7 +50,7 @@ function main (files)
          f:close ()
       end
       f = io.open (resolve ("$(localTmpDir)buildnumber.txt"), "w")
-      if f then f:write (build) f:close () end
+      if f then f:write (major .. "-" .. minor .. "-" .. bug .. "-" .. build) f:close () end
    end   
 end
 
